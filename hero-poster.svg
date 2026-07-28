@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1a2010"/>
+      <stop offset="0.6" stop-color="#0d0d0d"/>
+    </linearGradient>
+    <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+      <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#5c6b3c" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+    <radialGradient id="spot" cx="0.3" cy="0.5" r="0.6">
+      <stop offset="0" stop-color="#5c6b3c" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#5c6b3c" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+  <rect width="1920" height="1080" fill="url(#grid)"/>
+  <rect width="1920" height="1080" fill="url(#spot)"/>
+  <g opacity="0.12" font-family="monospace" font-size="14" fill="#7a8f52">
+    <text x="80" y="120">[ IR ] 3-14 μm</text>
+    <text x="80" y="160">SIG: -97%</text>
+    <text x="80" y="200">SCAN: ACTIVE</text>
+    <text x="80" y="240">TARGET: MASKED</text>
+  </g>
+  <g opacity="0.10" font-family="Impact, Arial Black, sans-serif" font-size="220" font-weight="700" fill="#5c6b3c">
+    <text x="120" y="780">IR</text>
+  </g>
+</svg>
