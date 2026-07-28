@@ -1,0 +1,489 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+  --font-display: var(--font-oswald);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* СНАРЯГА36 brand tokens — exposed as Tailwind utilities (bg-bg, text-olive, etc.) */
+  --color-bg: var(--bg);
+  --color-bg2: var(--bg2);
+  --color-bg3: var(--bg3);
+  --color-card-brand: var(--card-brand);
+  --color-olive: var(--olive);
+  --color-olive-light: var(--olive-light);
+  --color-olive-dark: var(--olive-dark);
+  --color-coyote: var(--coyote);
+  --color-coyote-light: var(--coyote-light);
+  --color-text: var(--text);
+  --color-text2: var(--text2);
+  --color-text3: var(--text3);
+  --color-border-brand: var(--border-brand);
+}
+
+:root {
+  /* shadcn defaults (kept for component compatibility) */
+  --radius: 0.375rem;
+  --background: #0d0d0d;
+  --foreground: #f0f0f0;
+  --card: #1e1e1e;
+  --card-foreground: #f0f0f0;
+  --popover: #1e1e1e;
+  --popover-foreground: #f0f0f0;
+  --primary: #5c6b3c;
+  --primary-foreground: #ffffff;
+  --secondary: #141414;
+  --secondary-foreground: #f0f0f0;
+  --muted: #141414;
+  --muted-foreground: #999999;
+  --accent: #5c6b3c;
+  --accent-foreground: #ffffff;
+  --destructive: #c0392b;
+  --border: #2a2a2a;
+  --input: #2a2a2a;
+  --ring: #5c6b3c;
+
+  /* СНАРЯГА36 brand palette */
+  --bg: #0d0d0d;
+  --bg2: #141414;
+  --bg3: #1a1a1a;
+  --card-brand: #1e1e1e;
+  --olive: #5c6b3c;
+  --olive-light: #8aa25c;
+  --olive-dark: #3d4728;
+  --coyote: #8b7355;
+  --coyote-light: #b8a080;
+  --text: #f0f0f0;
+  --text2: #b8b8b8;
+  --text3: #8a8a8a;
+  --border-brand: #2a2a2a;
+
+  --chart-1: #5c6b3c;
+  --chart-2: #8b7355;
+  --chart-3: #8aa25c;
+  --chart-4: #a89070;
+  --chart-5: #3d4728;
+
+  --sidebar: #141414;
+  --sidebar-foreground: #f0f0f0;
+  --sidebar-primary: #5c6b3c;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1a1a1a;
+  --sidebar-accent-foreground: #f0f0f0;
+  --sidebar-border: #2a2a2a;
+  --sidebar-ring: #5c6b3c;
+}
+
+.dark {
+  /* Same as :root — site is always dark */
+  --background: #0d0d0d;
+  --foreground: #f0f0f0;
+  --card: #1e1e1e;
+  --card-foreground: #f0f0f0;
+  --popover: #1e1e1e;
+  --popover-foreground: #f0f0f0;
+  --primary: #5c6b3c;
+  --primary-foreground: #ffffff;
+  --secondary: #141414;
+  --secondary-foreground: #f0f0f0;
+  --muted: #141414;
+  --muted-foreground: #999999;
+  --accent: #5c6b3c;
+  --accent-foreground: #ffffff;
+  --destructive: #c0392b;
+  --border: #2a2a2a;
+  --input: #2a2a2a;
+  --ring: #5c6b3c;
+}
+
+@layer base {
+  * {
+    border-color: var(--border-brand);
+    outline-color: rgba(92, 107, 60, 0.5);
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-inter), sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+}
+
+/* ====== Custom scrollbar ====== */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--olive);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--olive-light);
+}
+
+/* ====== Reveal-on-scroll ====== */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ====== Hero scanlines ====== */
+@keyframes sn-scanline {
+  0% {
+    background-position: 0 0, 0 0;
+  }
+  100% {
+    background-position: 0 100vh, 0 0;
+  }
+}
+
+/* ====== Marquee ====== */
+@keyframes sn-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* ====== Hero scroll indicator ====== */
+@keyframes sn-scroll-down {
+  0% {
+    top: -100%;
+  }
+  100% {
+    top: 100%;
+  }
+}
+
+/* ====== Modal in ====== */
+@keyframes sn-modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ====== HoverZoom floating preview ====== */
+@keyframes sn-hover-zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ====== Toast slide-in ====== */
+@keyframes sn-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(80px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ====== IR target visual (Tech section) ====== */
+@keyframes sn-ir-pulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+@keyframes sn-ir-scan {
+  0% {
+    top: 0%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+/* ====== Cookie consent slide-up ====== */
+@keyframes sn-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ====== Call FAB ====== */
+@keyframes sn-fab-wave {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+@keyframes sn-fab-pulse {
+  0%,
+  100% {
+    box-shadow: 0 8px 30px rgba(92, 107, 60, 0.5);
+  }
+  50% {
+    box-shadow: 0 8px 40px rgba(122, 143, 82, 0.8);
+  }
+}
+@keyframes sn-fab-ring {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  10% {
+    transform: rotate(-12deg);
+  }
+  20% {
+    transform: rotate(12deg);
+  }
+  30% {
+    transform: rotate(0);
+  }
+}
+
+/* Utility: clamp-based fluid section padding */
+.sn-section {
+  padding: 7rem 3rem;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+@media (max-width: 768px) {
+  .sn-section {
+    padding: 4rem 1.5rem;
+  }
+}
+
+/* Декоративная нумерация секций — badge в правом-верхнем углу header.
+   Виден только на десктопе (≥1024px), мелкий, не мешает контенту.
+   Добавляет «тактический» инструмент-вид: 01, 02 и т.д. */
+@layer components {
+  @media (min-width: 1024px) {
+    body {
+      counter-reset: sn-section;
+    }
+    section.sn-section > header:first-child {
+      position: relative;
+    }
+    section.sn-section > header:first-child::after {
+      counter-increment: sn-section;
+      content: counter(sn-section, decimal-leading-zero);
+      position: absolute;
+      top: 0;
+      right: 0;
+      font-family: var(--font-jetbrains-mono), monospace;
+      font-size: 0.6rem;
+      letter-spacing: 2px;
+      color: var(--text3);
+      opacity: 0.5;
+      border: 1px solid var(--border-brand);
+      padding: 4px 8px;
+      background: var(--bg2);
+      pointer-events: none;
+    }
+  }
+}
+
+/* Font helpers (so we can use font-display / font-mono brand fonts) */
+.font-display {
+  font-family: var(--font-oswald), sans-serif;
+}
+.font-mono-brand {
+  font-family: var(--font-jetbrains-mono), monospace;
+}
+
+/* Selection */
+::selection {
+  background: var(--olive);
+  color: #fff;
+}
+
+/* Global focus-visible ring for accessibility */
+:focus-visible {
+  outline: 2px solid var(--olive-light);
+  outline-offset: 2px;
+}
+
+/* Respect EXIF orientation for all images — prevents photos from
+   appearing rotated when shot in portrait on phones/cameras.
+   Browsers default to this since 2020, but we enforce it explicitly. */
+img {
+  image-orientation: from-image;
+}
+
+/* Compare table — consistent zebra-striping for all body rows.
+   Improves readability when scanning a row left-to-right. */
+.sn-compare-table tbody tr:nth-child(even) {
+  background-color: rgba(138, 162, 92, 0.05);
+}
+.sn-compare-table tbody tr:hover {
+  background-color: rgba(138, 162, 92, 0.12);
+}
+
+/* Product tag badges — subtle glow for "ХИТ" and "Новинка" to draw attention. */
+.sn-tag-hit {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 2px 12px rgba(168, 90, 60, 0.5);
+}
+.sn-tag-new {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 2px 12px rgba(139, 115, 85, 0.4);
+}
+
+/* «Прицельная» подсветка карточки товара — 4 угловых скобки (corner-brackets),
+   появляющиеся при hover. Тактический «прицел»-вид. Только на устройствах
+   с hover (мышь), не на тач-экранах. */
+@media (hover: hover) and (pointer: fine) {
+  .sn-scope-card::before,
+  .sn-scope-card::after {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-color: var(--olive-light);
+    opacity: 0;
+    transition: opacity 0.25s ease-out;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .sn-scope-card::before {
+    top: 6px;
+    left: 6px;
+    border-top: 2px solid;
+    border-left: 2px solid;
+  }
+  .sn-scope-card::after {
+    bottom: 6px;
+    right: 6px;
+    border-bottom: 2px solid;
+    border-right: 2px solid;
+  }
+  .sn-scope-card:hover::before,
+  .sn-scope-card:hover::after {
+    opacity: 0.85;
+  }
+}
+
+/* Анимация «jump» для badge счётчика корзины/избранного при добавлении товара.
+   Прыжок вверх-вниз + лёгкое увеличение. 0.6s.
+   @layer нужен чтобы Lightning CSS (Tailwind v4) не tree-shake'нул keyframe. */
+@layer components {
+  @keyframes sn-badge-bounce {
+    0% {
+      transform: scale(1) translateY(0);
+    }
+    30% {
+      transform: scale(1.4) translateY(-4px);
+    }
+    60% {
+      transform: scale(1.15) translateY(2px);
+    }
+    100% {
+      transform: scale(1) translateY(0);
+    }
+  }
+  .sn-badge-bounce {
+    animation: sn-badge-bounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+}
+
+/* Subtle film-grain noise overlay on body (cheap, GPU-friendly) */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.025;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Reduce motion: disable non-essential animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
