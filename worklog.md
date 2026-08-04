@@ -261,3 +261,33 @@ Final repo state on GitHub:
   main               d1a09fc (merged PR #2) ← beautiful organized static export
   feat/static-export 90ceda9 (migration commit)
   sbaryaga-gml       456dce9 (user's other branch, untouched)
+
+---
+Task ID: STATIC-BUILD
+Agent: main
+Task: Build static export and push to main in separate folder.
+
+Work Log:
+- Cleaned old out/ and .next/ build artifacts
+- Ran `bun run build` (next build with output:'export') — compiled in 4.9s, generated 3 static pages
+- Verified ./out/ contents: index.html (316KB), 404.html, _next/ (JS/CSS/fonts), products/ (images), videos/ (empty), logo.svg, hero-poster.svg, robots.txt — 30MB total
+- Copied out/ → static-build/ (separate folder in repo for deployable artifact)
+- Added static-build/README.md with deploy instructions (GitHub Pages, Netlify, any host)
+- Added static-build/.nojekyll (disables Jekyll on GitHub Pages so _next/ folder works)
+- Committed 90 files: "build: add static export to static-build/ (deployable artifact)"
+- Pushed to main: d1a09fc..d3677a7
+
+Verification (static-build/ served via python http.server on :3001):
+- HTTP / → 200, title "СНАРЯГА36 — Маскировка нового поколения" ✓
+- JS asset /_next/static/chunks/c39637bc9d8cb116.js → 200, 16KB ✓
+- Product image /products/cover-1.jpg → 200 ✓
+- Agent Browser: 16 sections rendered, footer present, nav present ✓
+- No console errors, no page errors ✓
+- Interactive test: clicked "Добавить в корзину" → cart counter 0→1, localStorage sn36-cart updated with product ✓
+- CSS is inlined by Next.js (no separate .css files — better performance)
+
+Stage Summary:
+- static-build/ folder on main contains ready-to-deploy static site
+- Works fully offline as SPA (no server needed at runtime)
+- Deploy to GitHub Pages: Settings → Pages → branch main / folder /static-build
+- To rebuild: `bun run build` then `cp -r out/* static-build/`
