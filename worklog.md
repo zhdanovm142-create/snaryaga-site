@@ -232,3 +232,32 @@ The snaryaga-site has been successfully migrated from SSR/ISR (Next.js standalon
 - Cart/favorites/recently-viewed via localStorage + useSyncExternalStore
 - Forms submit to FormSubmit.co via client-side fetch
 - No server runtime needed — deployable to any static host (GitHub Pages, Netlify, Cloudflare Pages, etc.)
+
+---
+Task ID: POST-MERGE
+Agent: main
+Task: Add README, create PR feat/static-export → main, merge to main.
+
+Work Log:
+- Wrote comprehensive README.md (setup, build, deploy to GitHub Pages/Netlify/Cloudflare, project structure, config: change FormSubmit email, add products/videos, tech stack)
+- Initial commit went to wrong branch (main) — fast-forwarded feat/static-export to include it, pushed
+- Attempted PR creation: GitHub refused (422) — "feat/static-export has no history in common with main" (unrelated histories: origin/main = original flat upload, our branch = template-based)
+- Solution: rebuilt feat/static-export ON TOP of origin/main using read-tree (single commit replacing all flat files with organized structure). Force-pushed.
+- Created PR #2 via GitHub API: https://github.com/zhdanovm142-create/snaryaga-site/pull/2
+  * mergeable: True, state: clean, 292 files changed (+16163 / -3043)
+- Merged PR #2 via GitHub Merge API (merge method): merge commit d1a09fc
+- Synced local main to origin/main (reset --hard)
+- Verified: curl http://localhost:3000/ → HTTP 200, correct title "СНАРЯГА36 — Маскировка нового поколения", content renders
+
+Stage Summary:
+- Remote main (d1a09fc) now contains the full organized static-export code
+- PR #2 created and merged (visible in repo history)
+- feat/static-export branch preserved at 90ceda9 (the migration commit)
+- README.md added with deploy instructions (GitHub Pages workflow included)
+- Original flat code preserved in legacy/ folder
+- Site verified working via curl (full e2e browser test done earlier in T09)
+
+Final repo state on GitHub:
+  main               d1a09fc (merged PR #2) ← beautiful organized static export
+  feat/static-export 90ceda9 (migration commit)
+  sbaryaga-gml       456dce9 (user's other branch, untouched)
