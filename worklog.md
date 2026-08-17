@@ -325,3 +325,58 @@ Stage Summary:
 БЕЗОПАСНОСТЬ:
 - Классический PAT ghp_WQmz358... компрометирован (виден в истории чата). Пользователь должен ОБЯЗАТЕЛЬНО отозвать его на https://github.com/settings/tokens после завершения всех работ.
 - На будущее: настроить SSH-ключ (https://docs.github.com/authentication/connecting-to-github-with-ssh) — не нужны будут токены.
+
+---
+Task ID: CONTENT-FINAL-v4
+Agent: main
+Task: Подключение реальных медиа-файлов (hero.mp4 + 2 PNG рюкзака) и финальный push.
+
+Work Log:
+- Пользователь загрузил файлы через GitHub Web UI в отдельную ветку zhdanovm142-create-patch-ввидео-и-рюкзак (коммит e41d14f "Add files via upload"):
+  * hero.mp4 (15.6 МБ, ISO Media MP4 v2)
+  * ryukzak_50l (2).png (7.6 МБ, PNG 2475×3500 RGB)
+  * ryukzak_50l (3).png (4.3 МБ, PNG 2475×3500 RGB)
+- Обновлён refspec remote.origin.fetch для подхвата всех веток (+refs/heads/*:refs/remotes/origin/*).
+- Через git checkout origin/zhdanovm142-create-patch-ввидео-и-рюкзак -- ... вытащены 3 файла в working tree.
+- Файлы переименованы и перемещены в правильные места:
+  * ryukzak_50l (2).png → /public/products/cover-50l-2.png
+  * ryukzak_50l (3).png → /public/products/cover-50l-3.png
+  * hero.mp4 → /public/hero.mp4
+- В products.ts обновлены hover-ссылки для двух товаров:
+  * ryukzak-fantom-50: cover-2.jpg → cover-50l-2.png (настоящее фото пользователя)
+  * chehol-na-ryukzak: cover-3.jpg → cover-50l-3.png (настоящее фото пользователя)
+- В Hero.tsx НИКАКИХ правок не понадобилось — тег <video> уже был настроен на /hero.mp4 с poster='/hero-poster.svg'. Просто положили файл в /public/ — видео заработало.
+- Lint чистый (0 ошибок).
+- Build успешный (Next.js 16.1.3, 5.5s, 3 static pages).
+- Static-build пересобран: 57 МБ (увеличился с 30 МБ за счёт hero.mp4).
+- Sanity-проверка через python http.server: все файлы отдаются корректно:
+  * hero.mp4: 200, 15.6 МБ, content-type: video/mp4
+  * cover-50l-2.png: 200, 7.6 МБ
+  * cover-50l-3.png: 200, 4.3 МБ
+  * logo.svg: 200, 310 байт
+  * HTML содержит ссылки на все три файла
+- Коммит 3005051 запушен на GitHub (через временный cred-файл).
+- Подтверждено через GitHub API: ветка feat/content-final-v3 на SHA 3005051, файлы hero.mp4/logo.svg/hero-poster.svg присутствуют в /public/.
+
+Stage Summary:
+- ВСЕ ПРАВКИ ТЗ ВЫПОЛНЕНЫ ПОЛНОСТЬЮ. Ветка feat/content-final-v3 готова к merge в main.
+- Финальный список изменений:
+  1. H1: «в ИК-спектре» → «в ИК-диапазоне» + мягкий subtitle
+  2. Stat-блок: 30+ стирок, 5+ боевых задач, убрано слово «диапазон»
+  3. Бегущая строка: убран «Военный стандарт»
+  4. Шапка: добавлена Telegram-кнопка «Макс · TG»
+  5. Блоки направлений: добавлены 3 развёрнутых описания
+  6. Переименование «Рюкзаки» → «Чехлы на рюкзаки» (везде)
+  7. 50+ → 30+ стирок (5 мест)
+  8. Телефон: +7 (951) 559-66-22 → +7 (900) 300-46-36 (11 мест)
+  9. Hover-фото Чехла 50л: cover-50l-2.png (настоящее фото пользователя)
+  10. Hover-фото Чехла на рюкзак ИК: cover-50l-3.png (настоящее фото пользователя)
+  11. Favicon: новый SVG (оливковый #4c704b + «С36»)
+  12. Hero видео: hero.mp4 (15.6 МБ) — работает в Hero-секции
+  13. BUG 1 (каталог): remount сетки при смене фильтра
+  14. BUG 3 (миниатюра): preview по центру над курсором
+- Static-build 57 МБ готов к деплою на GitHub Pages / Netlify / Cloudflare Pages.
+
+БЕЗОПАСНОСТЬ:
+- Временные cred-файлы удалены сразу после push.
+- Классический PAT ghp_WQmz358... компрометирован — пользователь должен отозвать.
