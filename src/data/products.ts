@@ -116,9 +116,9 @@ export const PRODUCTS: Product[] = [
       "Штурмовой рюкзак объёмом 20 литров для коротких выходов и боевых задач. Многослойная экранирующая ткань стенок подавляет тепловую сигнатуру содержимого. Анатомическая спинка с вентиляционными каналами, грузоподъёмность до 25 кг. Система Molle на внешней панели позволяет крепить дополнительное снаряжение.",
     price: "По запросу",
     images: {
-      main: "https://z-cdn-media.chatglm.cn/files/dfb1d979-b59b-489c-84ec-7c011541fcf9.png?auth_key=1884285506-fd2bf766c92e43f1b9078efc0c80eded-0-938ed3510cd66a6f70df8809680d4eb5",
+      main: "/products/ryukzak-ten-20-1.png",
       hover:
-        "https://z-cdn-media.chatglm.cn/files/115b0083-6890-45ab-ab10-9fcfc686d324.png?auth_key=1884284111-aff1811b703149818fecb87fb5b4308b-0-2f70d6283446807e64e59538e6a0fbbe",
+        "/products/ryukzak-ten-20-2.png",
     },
     alt: {
       main: "Рюкзак 20л вид 1",
@@ -155,9 +155,9 @@ export const PRODUCTS: Product[] = [
       "Патрульный рюкзак объёмом 50 литров — оптимальный выбор для задач на 2–3 суток. Многослойная ИК-защита стенок и дна. Боковые стяжки, два внешних кармана на молнии, отделение под гидратор. Регулируемая подвесная система под рост 160–195 см.",
     price: "По запросу",
     images: {
-      main: "https://z-cdn-media.chatglm.cn/files/d9b8c302-e402-4521-a4b6-81f94569bf41.png?auth_key=1884296074-36a5cdf605f840fda01f1f1fe43baea5-0-93a85ec6361d79df3b9ba5cd0f7d0208",
+      main: "/products/ryukzak-fantom-50-1.png",
       hover:
-        "https://z-cdn-media.chatglm.cn/files/9b4b36b0-b83f-46dd-8cbf-d235a94d821b.png?auth_key=1884296074-467407ddd77a4392994b10589d90d4a9-0-ddbd963ac7c4f19887d88bffcbc7bf4e",
+        "/products/ryukzak-fantom-50-1.png",
     },
     alt: {
       main: "Рюкзак 50л вид 1",
@@ -194,9 +194,9 @@ export const PRODUCTS: Product[] = [
       "Тяжёлый грузовой рюкзак объёмом 100 литров для эвакуации снаряжения и базирования. Усиленная рама, полная ИК-изоляция всех поверхностей. Двойное дно, отдельный нижний доступ. Рассчитан на длительные переходы с грузом до 50 кг.",
     price: "По запросу",
     images: {
-      main: "https://z-cdn-media.chatglm.cn/files/24ab3610-a67c-47ba-9ddf-2c7fb5b95add.png?auth_key=1884284594-e3daede8e96b4432bfcb9c3d0327fa9c-0-9210476270f9ca2795416d46b704b6bf",
+      main: "/products/ryukzak-bastion-100-1.png",
       hover:
-        "https://z-cdn-media.chatglm.cn/files/e76e64d4-e455-4c6e-9c3d-7db86a832054.png?auth_key=1884284594-d3cb92b5c1104fdfa3a41f9d6ce41727-0-9419c7f1da6f064b4e3666df0080b56f",
+        "/products/ryukzak-bastion-100-2.png",
     },
     alt: {
       main: "Рюкзак 100л вид 1",
@@ -491,9 +491,9 @@ export const PRODUCTS: Product[] = [
       "Чехол-накидка с ИК-экранированием для рюкзаков объёмом до 60 литров. Стягивается шнуром по периметру, фиксируется клипсами. Применяется, когда полный экранированный рюкзак недоступен — надевается поверх обычного. Складывается в собственный мешок размером с кулак. Олива или койот.",
     price: "По запросу",
     images: {
-      main: "https://z-cdn-media.chatglm.cn/files/d9b8c302-e402-4521-a4b6-81f94569bf41.png?auth_key=1884296074-36a5cdf605f840fda01f1f1fe43baea5-0-93a85ec6361d79df3b9ba5cd0f7d0208",
+      main: "/products/ryukzak-fantom-50-1.png",
       hover:
-        "https://z-cdn-media.chatglm.cn/files/9b4b36b0-b83f-46dd-8cbf-d235a94d821b.png?auth_key=1884296074-467407ddd77a4392994b10589d90d4a9-0-ddbd963ac7c4f19887d88bffcbc7bf4e",
+        "/products/ryukzak-fantom-50-1.png",
     },
     alt: {
       main: "Чехол на рюкзак ИК, вид 1",
