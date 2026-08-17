@@ -291,3 +291,37 @@ Stage Summary:
 - Works fully offline as SPA (no server needed at runtime)
 - Deploy to GitHub Pages: Settings → Pages → branch main / folder /static-build
 - To rebuild: `bun run build` then `cp -r out/* static-build/`
+
+---
+Task ID: CONTENT-FINAL-v3
+Agent: main
+Task: Финальная сборка и push на GitHub — favicon, hover-фото, статик-билд, новая ветка.
+
+Work Log:
+- После сброса окружения: потеряны загруженные пользователем файлы (logo.svg, 2 фото рюкзака, hero.mp4). Local-репо склонировано заново из origin/main, осталась только ветка feat/content-fixes-v2 с одним воссозданным коммитом a0a19ff (все правки одной кучей).
+- Favicon: сгенерирован чистый SVG 64×64 (оливковый фон #4c704b + белая надпись «С36» жирным шрифтом). Без мусора, base64-PNG, отрицательных координат, "Lorem Ipsum" текста. Записан в public/logo.svg.
+- Hover-фото для Чехла 50л и Чехла на рюкзак ИК: исходные PNG пользователя потеряны при сбросе. Использованы существующие локальные файлы /products/cover-2.jpg (для Чехла 50л) и /products/cover-3.jpg (для Чехла на рюкзак ИК). Товары визуально различимы. В products.ts добавлены комментарии про протухший CDN.
+- Hero.mp4: файл не пришёл (потерян при сбросе). Hero.tsx уже содержит тег <video> с poster='/hero-poster.svg' — пока файла нет, показывается постер. Когда пользователь пришлёт hero.mp4, достаточно положить его в /public/hero.mp4.
+- Создана новая ветка feat/content-final-v3 из origin/main. Через cherry-pick перенесён коммит a0a19ff со всеми правками v1+v2. Сверху добавлены коммиты:
+  * 9b5d273 — cherry-pick a0a19ff (все правки ТЗ v1+v2 + пересборка static-build)
+  * e3ccd5e — новый favicon + hover-фото + пересборка static-build
+- Пользователь прислал классический PAT ghp_WQmz358... (с правами repo). Через временный credential file (без сохранения в git config) выполнен push:
+  * git push -u origin feat/content-final-v3 → SUCCESS
+  * GitHub подтвердил: branch 'feat/content-final-v3' создан, last commit e3ccd5e4
+- Временный cred-файл /tmp/git-creds-x9k2 удалён сразу после push.
+- Sanity-проверка static-build через python http.server: HTTP 200, title корректный, телефон 79003004636 присутствует, H1 «в ИК-диапазоне», cover-2.jpg и cover-3.jpg в HTML, logo.svg отдаётся (310 байт), hero-poster.svg отдаётся (заглушка для hero.mp4).
+- Размер static-build: 30 МБ.
+
+Stage Summary:
+- Ветка feat/content-final-v3 запушена на GitHub: https://github.com/zhdanovm142-create/snaryaga-site/tree/feat/content-final-v3
+- Готова PR-страница: https://github.com/zhdanovm142-create/snaryaga-site/pull/new/feat/content-final-v3
+- Все правки ТЗ v1, v2, v3 в одном месте.
+- ВСЁ ГОТОВО К MERGE В MAIN.
+
+НЕ ВЫПОЛНЕНО (требует пользовательского ввода):
+1. Hero.mp4 — файл потерян при сбросе окружения. Нужно прислать ещё раз, положу в /public/hero.mp4.
+2. Если пользователя не устраивают cover-2.jpg / cover-3.jpg как hover-фото (это JPG из существующего архива, не оригинальные PNG пользователя) — прислать правильные фото, заменю.
+
+БЕЗОПАСНОСТЬ:
+- Классический PAT ghp_WQmz358... компрометирован (виден в истории чата). Пользователь должен ОБЯЗАТЕЛЬНО отозвать его на https://github.com/settings/tokens после завершения всех работ.
+- На будущее: настроить SSH-ключ (https://docs.github.com/authentication/connecting-to-github-with-ssh) — не нужны будут токены.
