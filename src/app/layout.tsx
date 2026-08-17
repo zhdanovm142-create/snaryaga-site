@@ -48,6 +48,21 @@ export const metadata: Metadata = {
     siteName: "Снаряга36",
     type: "website",
     locale: "ru_RU",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "СНАРЯГА36 — ИК-защитная экипировка",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "СНАРЯГА36 — Маскировка нового поколения",
+    description:
+      "ИК-защитная экипировка: рюкзаки, накидки, костюмы из экранирующих тканей.",
+    images: ["/og-image.jpg"],
   },
 };
 
