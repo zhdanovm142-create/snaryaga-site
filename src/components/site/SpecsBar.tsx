@@ -3,7 +3,7 @@ import AnimatedStat from "./AnimatedStat";
 const SPECS = [
   { value: "-97%", label: "Снижение ИК-сигнатуры", icon: "🛡️" },
   { value: "3-14", label: "Диапазон мкм", icon: "📡" },
-  { value: "50+", label: "Циклов стирки", icon: "🔄" },
+  { value: "30+", label: "Циклов стирки", icon: "🔄" },
   { value: "IP67", label: "Класс защиты", icon: "💧" },
 ];
 

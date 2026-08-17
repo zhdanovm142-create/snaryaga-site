@@ -311,10 +311,17 @@ export default function CatalogToolbar({
             </button>
           </div>
         ) : (
-          <div className={view === "grid"
-            ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-[var(--border-brand)] border border-[var(--border-brand)]"
-            : "flex flex-col gap-px bg-[var(--border-brand)] border border-[var(--border-brand)]"
-          }>
+          // key={`${filter}-${view}`} — принудительный remount сетки при смене
+          // фильтра/вида. Без этого у карточек сохраняется внутренний state
+          // BlurImage (loaded=true на старый src), из-за чего при возврате
+          // на категорию могут появляться пустые/битые блоки.
+          <div
+            key={`${filter}-${view}`}
+            className={view === "grid"
+              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-[var(--border-brand)] border border-[var(--border-brand)]"
+              : "flex flex-col gap-px bg-[var(--border-brand)] border border-[var(--border-brand)]"
+            }
+          >
             {filtered.map((p) => (
               <ProductCard
                 key={p.id}

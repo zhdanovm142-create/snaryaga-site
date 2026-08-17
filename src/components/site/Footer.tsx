@@ -19,7 +19,7 @@ const WA_ICON = (
 const MESSENGERS = [
   { href: "https://vk.ru/club240233552", label: "ВКонтакте", icon: VK_ICON, color: "#0077ff" },
   { href: "https://t.me/snaryaga36", label: "Telegram", icon: TG_ICON, color: "#2aabee" },
-  { href: "https://wa.me/79515596622", label: "WhatsApp", icon: WA_ICON, color: "#25d366" },
+  { href: "https://wa.me/79003004636", label: "WhatsApp", icon: WA_ICON, color: "#25d366" },
 ];
 
 import CookieSettingsButton from "./CookieSettingsButton";
@@ -87,7 +87,7 @@ export default function Footer() {
               Каталог
             </div>
             <ul className="list-none p-0 m-0 space-y-3">
-              <li><a href="#products" className="text-[var(--text2)] no-underline text-[0.85rem] transition-colors hover:text-[var(--olive-light)] hover:pl-1">Рюкзаки 20L / 50L / 100L</a></li>
+              <li><a href="#products" className="text-[var(--text2)] no-underline text-[0.85rem] transition-colors hover:text-[var(--olive-light)] hover:pl-1">Чехлы на рюкзаки 20-50-100 л</a></li>
               <li><a href="#suits" className="text-[var(--text2)] no-underline text-[0.85rem] transition-colors hover:text-[var(--olive-light)] hover:pl-1">Костюмы «Бугор»</a></li>
               <li><a href="#burger-chooser" className="text-[var(--text2)] no-underline text-[0.85rem] transition-colors hover:text-[var(--olive-light)] hover:pl-1">Подбор костюма</a></li>
               <li><a href="#poncho" className="text-[var(--text2)] no-underline text-[0.85rem] transition-colors hover:text-[var(--olive-light)] hover:pl-1">Накидки</a></li>
@@ -118,13 +118,13 @@ export default function Footer() {
             </div>
             <ul className="list-none p-0 m-0 space-y-3">
               <li>
-                <a href="tel:+79515596622" className="group flex items-center gap-2.5 text-[var(--text2)] no-underline text-[0.88rem] font-bold transition-colors hover:text-[var(--olive-light)]">
+                <a href="tel:+79003004636" className="group flex items-center gap-2.5 text-[var(--text2)] no-underline text-[0.88rem] font-bold transition-colors hover:text-[var(--olive-light)]">
                   <span className="w-7 h-7 flex-shrink-0 flex items-center justify-center bg-[var(--bg2)] border border-[var(--border-brand)] group-hover:border-[var(--olive)] transition-colors">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.4 0 .8-.3 1l-2.2 2.2z" />
                     </svg>
                   </span>
-                  +7 (951) 559-66-22
+                  +7 (900) 300-46-36
                 </a>
               </li>
               <li>

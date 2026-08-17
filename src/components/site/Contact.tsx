@@ -7,9 +7,9 @@ interface Props {
 }
 
 const PRODUCT_OPTIONS = [
-  "Рюкзак 20 литров",
-  "Рюкзак 50 литров",
-  "Рюкзак 100 литров",
+  "Чехол на рюкзак 20 л",
+  "Чехол на рюкзак 50 л",
+  "Чехол на рюкзак 100 л",
   "Костюм «Малый Бугор»",
   "Костюм «Средний Бугор»",
   "Костюм «Большой Бугор»",
@@ -23,7 +23,7 @@ const PRODUCT_OPTIONS = [
 
 const QUICK_CONTACTS = [
   { href: "https://t.me/snaryaga36", label: "Telegram", short: "@snaryaga36", color: "#2aabee" },
-  { href: "https://wa.me/79515596622", label: "WhatsApp", short: "+7 951 559-66-22", color: "#25d366" },
+  { href: "https://wa.me/79003004636", label: "WhatsApp", short: "+7 900 300-46-36", color: "#25d366" },
 ];
 
 /** Маска для российского телефона: +7 (XXX) XXX-XX-XX */
@@ -165,10 +165,10 @@ export default function Contact({ onSubmitted }: Props) {
                   Телефон
                 </div>
                 <a
-                  href="tel:+79515596622"
+                  href="tel:+79003004636"
                   className="text-[var(--text)] no-underline text-base hover:text-[var(--olive-light)] transition-colors"
                 >
-                  +7 (951) 559-66-22
+                  +7 (900) 300-46-36
                 </a>
               </div>
             </li>

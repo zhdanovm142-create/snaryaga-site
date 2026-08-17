@@ -22,6 +22,12 @@ const VK_ICON = (
   </svg>
 );
 
+const TG_ICON = (
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M21.94 4.5 18.6 20.06c-.25 1.1-.92 1.37-1.86.85l-5.14-3.79-2.48 2.39c-.27.27-.5.5-1.03.5l.37-5.2 9.5-8.58c.41-.37-.09-.57-.64-.2L5.07 13.1.97 11.82c-.89-.28-.91-.89.19-1.32l16.05-6.18c.74-.27 1.39.18 1.15 1.32z" />
+  </svg>
+);
+
 const PHONE_ICON = (
   <svg viewBox="0 0 24 24" aria-hidden="true">
     <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.4 0 .8-.3 1l-2.2 2.2z" />
@@ -173,6 +179,17 @@ export default function Nav({ onOpenFavorites, onOpenCart }: Props) {
         </IconButton>
         <MiniCartPreview onOpenCart={onOpenCart} />
         <a
+          href="https://t.me/snaryaga36"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Telegram: Макс"
+          title="Telegram: Макс"
+          className="flex items-center gap-1.5 py-[0.45rem] px-[0.9rem] bg-[rgba(42,171,238,0.08)] border border-[rgba(42,171,238,0.25)] rounded-[3px] text-[#5bc8f5] no-underline text-[0.68rem] font-semibold tracking-[1px] uppercase transition-all duration-300 hover:bg-[rgba(42,171,238,0.15)] hover:border-[rgba(42,171,238,0.45)]"
+        >
+          <span className="w-3.5 h-3.5 fill-current">{TG_ICON}</span>
+          Макс · TG
+        </a>
+        <a
           href="https://vk.ru/club240233552"
           target="_blank"
           rel="noopener noreferrer"
@@ -248,6 +265,14 @@ export default function Nav({ onOpenFavorites, onOpenCart }: Props) {
             </a>
           ))}
           <div className="flex gap-3 pt-2 border-t border-[var(--border-brand)]">
+            <a
+              href="https://t.me/snaryaga36"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 text-center py-2 px-3 bg-[rgba(42,171,238,0.08)] border border-[rgba(42,171,238,0.25)] rounded-[3px] text-[#5bc8f5] no-underline text-[0.68rem] font-semibold tracking-[1px] uppercase"
+            >
+              Макс · TG
+            </a>
             <a
               href="https://vk.ru/club240233552"
               target="_blank"

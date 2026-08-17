@@ -3,14 +3,14 @@
 export default function CallFab() {
   return (
     <a
-      href="tel:+79515596622"
+      href="tel:+79003004636"
       className="call-fab group fixed right-6 bottom-6 z-[1500] flex items-center gap-3 no-underline text-white"
-      aria-label="Позвонить: +7 (951) 559-66-22"
+      aria-label="Позвонить: +7 (900) 300-46-36"
     >
       <span className="hidden md:inline-block bg-[var(--bg2)] border border-[var(--olive)] py-2 px-[0.9rem] rounded-[3px] whitespace-nowrap text-[0.7rem] font-bold tracking-[1px] uppercase opacity-0 translate-x-[10px] transition-all duration-300 pointer-events-none group-hover:opacity-100 group-hover:translate-x-0">
         Связаться с нами
         <b className="block text-[var(--olive-light)] font-mono-brand text-[0.8rem] tracking-normal">
-          +7 (951) 559-66-22
+          +7 (900) 300-46-36
         </b>
       </span>
       <span

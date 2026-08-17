@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 
-const PHONE = "79515596622"; // без + для ссылок
-const PHONE_DISPLAY = "+7 (951) 559-66-22";
+const PHONE = "79003004636"; // без + для ссылок
+const PHONE_DISPLAY = "+7 (900) 300-46-36";
 
-const TELEGRAM_URL = "https://t.me/+79515596622";
+const TELEGRAM_URL = "https://t.me/+79003004636";
 const WHATSAPP_URL = `https://wa.me/${PHONE}?text=${encodeURIComponent(
   "Здравствуйте! Хочу уточнить детали по экипировке Снаряга36."
 )}`;

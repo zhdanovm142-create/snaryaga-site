@@ -61,22 +61,21 @@ export default function HoverZoom({ src, alt, hoverSrc, children }: Props) {
     const vw = window.innerWidth;
     const vh = window.innerHeight;
 
-    // Желаемая позиция — правее и выше курсора.
-    let x = e.clientX + margin;
+    // Желаемая позиция — по центру над курсором.
+    // Раньше preview прилипало справа от курсора (clientX + margin), что на
+    // правой половине экрана уводило его за viewport. Центрирование над
+    // курсором — более стандартный и предсказуемый UX.
+    let x = e.clientX - previewW / 2;
     let y = e.clientY - previewH - margin;
 
-    // Если справа не помещается — слева от курсора.
-    if (x + previewW > vw - margin) {
-      x = e.clientX - previewW - margin;
-    }
-    // Если сверху не помещается — ниже курсора.
+    // Если сверху не помещается — показываем снизу от курсора.
     if (y < margin) {
       y = e.clientY + margin;
     }
-    // Не выходим за правую/нижнюю границу.
+    // Не выходим за правую/левую/нижнюю границу viewport.
     if (x + previewW > vw - margin) x = vw - previewW - margin;
-    if (y + previewH > vh - margin) y = vh - previewH - margin;
     if (x < margin) x = margin;
+    if (y + previewH > vh - margin) y = vh - previewH - margin;
 
     setPos({ x, y });
   }, []);

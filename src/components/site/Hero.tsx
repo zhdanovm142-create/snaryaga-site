@@ -85,11 +85,15 @@ export default function Hero() {
         <div className="inline-flex items-center gap-2.5 font-mono-brand text-[0.7rem] text-[var(--olive-light)] tracking-[3px] uppercase mb-8 before:content-[''] before:w-10 before:h-px before:bg-[var(--olive)]">
           Маскировка нового поколения
         </div>
-        <h1 className="font-display text-[clamp(3rem,7vw,6.5rem)] font-bold leading-[0.95] tracking-[-2px] uppercase mb-8">
+        <h1 className="font-display text-[clamp(3rem,7vw,6.5rem)] font-bold leading-[0.95] tracking-[-2px] uppercase mb-3">
           Невидимость
           <br />
-          <span className="text-[var(--olive-light)]">в ИК-спектре</span>
+          <span className="text-[var(--olive-light)]">в ИК-диапазоне</span>
         </h1>
+        {/* Мягкий подзаголовок мелким шрифтом */}
+        <p className="font-mono-brand text-[0.72rem] text-[var(--olive-light)] tracking-[2px] uppercase mb-6 opacity-80">
+          Невидимость в ИК-диапазоне
+        </p>
         <p className="text-[1.05rem] text-[var(--text2)] max-w-[520px] leading-[1.8] mb-8">
           Разрабатываем и производим экипировку из экранирующих тканей, снижающих
           заметность в инфракрасном диапазоне. Защита от тепловизионных средств
@@ -131,9 +135,9 @@ export default function Hero() {
         <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 max-w-[640px]">
           {[
             { v: "−97%", l: "ИК-сигнатура" },
-            { v: "3–14", l: "мкм диапазон" },
-            { v: "50+", l: "циклов стирки" },
-            { v: "12", l: "моделей в каталоге" },
+            { v: "3–14", l: "мкм" },
+            { v: "30+", l: "циклов стирки" },
+            { v: "5+", l: "боевых задач" },
           ].map((s, i) => (
             <div
               key={s.l}
