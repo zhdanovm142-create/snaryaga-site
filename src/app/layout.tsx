@@ -23,10 +23,28 @@ const oswald = Oswald({
   display: "swap",
 });
 
+// Кириллический домен снаряга36.рф в punycode — безопасен для robots.txt,
+// sitemap.xml, canonical и og:url (всё должно быть в ASCII).
+export const SITE_URL = "https://xn--36-6kcao2dwaf3k.xn--p1ai";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  // Верификация панелей вебмастеров (коды предоставлены владельцем сайта):
+  // - Google Search Console: meta-тег google-site-verification
+  //   (альтернатива — DNS TXT, уже не требуется, пока meta в билде)
+  // - Яндекс.Вебмастер: meta-тег yandex-verification
+  //   (плюс файл yandex_40b673b993338f11.html в public/ — двойная схема,
+  //    сработает любой из способов)
+  verification: {
+    google: "S247pV9rj4NrXLqqU0EscFlY73aGiRyO-bfPHkcgorM",
+    yandex: "40b673b993338f11",
+  },
   title: "СНАРЯГА36 — Маскировка нового поколения. ИК-защитная экипировка",
   description:
     "Разрабатываем и производим экипировку из экранирующих тканей, снижающих заметность в инфракрасном диапазоне. Защита от тепловизионных средств наблюдения.",
+  alternates: {
+    canonical: "/",
+  },
   keywords: [
     "Снаряга36",
     "ИК-защита",
@@ -48,6 +66,20 @@ export const metadata: Metadata = {
     siteName: "Снаряга36",
     type: "website",
     locale: "ru_RU",
+    url: "/",
+    // SVG как og:image соцсети (VK/Telegram) не понимают — берём растровое фото.
+    images: [
+      {
+        url: "/products/ir-after.png",
+        width: 1344,
+        height: 768,
+        alt: "Экипировка СНАРЯГА36, невидимая в ИК-диапазоне (съёмка тепловизором)",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/products/ir-after.png"],
   },
 };
 
