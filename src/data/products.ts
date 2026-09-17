@@ -156,8 +156,10 @@ export const PRODUCTS: Product[] = [
     price: "По запросу",
     images: {
       main: "https://z-cdn-media.chatglm.cn/files/d9b8c302-e402-4521-a4b6-81f94569bf41.png?auth_key=1884296074-36a5cdf605f840fda01f1f1fe43baea5-0-93a85ec6361d79df3b9ba5cd0f7d0208",
+      // Второе фото «Фантом-50» на CDN отдаёт 403 (файл удалён/закрыт) —
+      // фолбэк на основное фото, чтобы не показывалась битая картинка.
       hover:
-        "https://z-cdn-media.chatglm.cn/files/9b4b36b0-b83f-46dd-8cbf-d235a94d821b.png?auth_key=1884296074-467407ddd77a4392994b10589d90d4a9-0-ddbd963ac7c4f19887d88bffcbc7bf4e",
+        "https://z-cdn-media.chatglm.cn/files/d9b8c302-e402-4521-a4b6-81f94569bf41.png?auth_key=1884296074-36a5cdf605f840fda01f1f1fe43baea5-0-93a85ec6361d79df3b9ba5cd0f7d0208",
     },
     alt: {
       main: "Рюкзак 50л вид 1",
@@ -492,8 +494,10 @@ export const PRODUCTS: Product[] = [
     price: "По запросу",
     images: {
       main: "https://z-cdn-media.chatglm.cn/files/d9b8c302-e402-4521-a4b6-81f94569bf41.png?auth_key=1884296074-36a5cdf605f840fda01f1f1fe43baea5-0-93a85ec6361d79df3b9ba5cd0f7d0208",
+      // Второе фото «Фантом-50» на CDN отдаёт 403 (файл удалён/закрыт) —
+      // фолбэк на основное фото, чтобы не показывалась битая картинка.
       hover:
-        "https://z-cdn-media.chatglm.cn/files/9b4b36b0-b83f-46dd-8cbf-d235a94d821b.png?auth_key=1884296074-467407ddd77a4392994b10589d90d4a9-0-ddbd963ac7c4f19887d88bffcbc7bf4e",
+        "https://z-cdn-media.chatglm.cn/files/d9b8c302-e402-4521-a4b6-81f94569bf41.png?auth_key=1884296074-36a5cdf605f840fda01f1f1fe43baea5-0-93a85ec6361d79df3b9ba5cd0f7d0208",
     },
     alt: {
       main: "Чехол на рюкзак ИК, вид 1",
