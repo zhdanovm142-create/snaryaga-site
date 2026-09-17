@@ -118,7 +118,7 @@ export default function RecentlyViewed({ onQuickView }: Props) {
               aria-label={`Открыть ${p.name}`}
             >
               <div
-                className="relative w-full aspect-square mb-3 overflow-hidden flex items-center justify-center bg-[var(--bg3)]"
+                className="relative w-full aspect-[2/3] mb-3 overflow-hidden flex items-center justify-center bg-[var(--bg3)]"
               >
                 <img
                   src={p.images.main}
