@@ -62,7 +62,7 @@ export default function Poncho() {
 
       <div className="reveal grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         {/* Preview stage — реальные фото */}
-        <div className="relative aspect-[4/3] border border-[var(--border-brand)] overflow-hidden bg-[var(--bg3)] group">
+        <div className="relative aspect-[3/4] border border-[var(--border-brand)] overflow-hidden bg-[var(--bg3)] group">
           <span className="absolute top-4 left-4 z-[3] px-3 py-[0.4rem] bg-[rgba(13,13,13,0.8)] border border-[var(--olive)] font-mono-brand text-[0.65rem] text-[var(--olive-light)] tracking-[1px] uppercase">
             ⇄ Двусторонняя
           </span>
@@ -198,7 +198,7 @@ export default function Poncho() {
               type="button"
               onClick={() => setLightbox(g.img)}
               aria-label={`Фото накидки: ${g.label}`}
-              className="relative aspect-square overflow-hidden bg-[var(--bg3)] group cursor-pointer"
+              className="relative aspect-[3/4] overflow-hidden bg-[var(--bg3)] group cursor-pointer"
             >
               <img
                 src={g.img}

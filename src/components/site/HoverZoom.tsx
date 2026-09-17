@@ -106,8 +106,8 @@ export default function HoverZoom({ src, alt, hoverSrc, children }: Props) {
           style={{
             left: pos.x,
             top: pos.y,
-            width: 260,
-            height: 260,
+            width: 240,
+            height: 360,
             animation: "sn-hover-zoom-in 0.18s ease-out",
           }}
           role="presentation"

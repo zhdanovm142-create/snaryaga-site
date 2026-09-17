@@ -58,7 +58,7 @@ export default function Suits({ onOrder, onQuickView }: Props) {
             type="button"
             onClick={() => setLightbox(s)}
             aria-label={`Открыть фото: ${s.name}`}
-            className="relative aspect-[3/4] overflow-hidden flex items-center justify-center group cursor-pointer text-left bg-[var(--bg3)] transition-all duration-300 hover:bg-[var(--bg2)]"
+            className="relative aspect-[2/3] overflow-hidden flex items-center justify-center group cursor-pointer text-left bg-[var(--bg3)] transition-all duration-300 hover:bg-[var(--bg2)]"
           >
             {/* Изображение костюма */}
             <img
@@ -131,7 +131,7 @@ export default function Suits({ onOrder, onQuickView }: Props) {
             className="max-w-[720px] w-full grid md:grid-cols-2 gap-0 border border-[var(--olive-dark)]"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative aspect-[3/4] md:aspect-auto overflow-hidden bg-[var(--bg3)]">
+            <div className="relative aspect-[2/3] md:aspect-auto overflow-hidden bg-[var(--bg3)]">
               <img
                 src={lightbox.images.main}
                 alt={lightbox.alt.main}

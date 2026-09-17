@@ -200,7 +200,7 @@ function ProductDetailContent({
         {/* Image side */}
         <div className="relative bg-[var(--bg3)] p-6 sm:p-8">
           <div
-            className="relative w-full aspect-square overflow-hidden flex items-center justify-center"
+            className="relative w-full aspect-[2/3] overflow-hidden flex items-center justify-center"
             style={imgWrapStyle}
           >
             <img

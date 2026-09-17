@@ -424,7 +424,7 @@ function ProductCard({
 
         <HoverZoom src={p.images.main} alt={p.alt.main} hoverSrc={p.images.hover}>
           <div
-            className="relative w-full sm:w-[200px] sm:flex-shrink-0 aspect-square overflow-hidden flex items-center justify-center cursor-pointer"
+            className="relative w-full sm:w-[200px] sm:flex-shrink-0 aspect-[2/3] overflow-hidden flex items-center justify-center cursor-pointer"
             onClick={() => onQuickView(p)}
             style={containerStyle}
           >
@@ -531,7 +531,7 @@ function ProductCard({
 
       <HoverZoom src={p.images.main} alt={p.alt.main} hoverSrc={p.images.hover}>
         <div
-          className="relative w-full aspect-square mb-6 overflow-hidden flex items-center justify-center cursor-pointer"
+          className="relative w-full aspect-[2/3] mb-6 overflow-hidden flex items-center justify-center cursor-pointer"
           onClick={() => onQuickView(p)}
           style={containerStyle}
         >

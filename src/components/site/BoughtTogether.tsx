@@ -102,7 +102,7 @@ export default function BoughtTogether({ product, onOrder, onSelectRelated }: Pr
 
                 {/* Миниатюра */}
                 <div
-                  className="relative w-full aspect-square mb-2 overflow-hidden bg-[var(--bg3)]"
+                  className="relative w-full aspect-[2/3] mb-2 overflow-hidden bg-[var(--bg3)]"
                 >
                   <img
                     src={p.images.main}

@@ -108,7 +108,7 @@ export default function BurgerChooser({ onQuickView, onOrder }: Props) {
                 )}
 
                 {/* Image */}
-                <div className="relative w-full aspect-[3/4] overflow-hidden bg-[var(--bg3)]">
+                <div className="relative w-full aspect-[2/3] overflow-hidden bg-[var(--bg3)]">
                   <img
                     src={s.images.main}
                     alt={s.alt.main}
