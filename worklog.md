@@ -310,3 +310,17 @@ Work Log:
 Stage Summary:
 - Статик-билдер (next build) теперь включает полный SEO-набор в итоговую статику: проверено автоматически (27/27) и в headless-браузере
 - Осталось вручную (вне кода): регистрация в Яндекс.Вебмастер/GSC + верификация (код в layout.tsx verification), отправка sitemap, Яндекс.Карты/2ГИС, бэклинки ВК/Telegram
+
+---
+Task ID: SEO-VERIFY-2
+Agent: main (Super Z sandbox)
+Task: Добавить коды верификации Яндекс.Вебмастер и Google Search Console в статик-билд.
+
+Work Log:
+- layout.tsx: заполнен блок verification — google: S247pV9rj4NrXLqqU0EscFlY73aGiRyO-bfPHkcgorM, yandex: 40b673b993338f11
+- public/yandex_40b673b993338f11.html: файл верификации Яндекса (копируется билдером в корень как есть)
+- bun run build → out/; проверено: оба meta-тега в <head>, файл на месте байт-в-байт, HTTP 200, прежние 27/27 SEO-проверок проходят
+- static-build/ пересобран + .nojekyll
+
+Stage Summary:
+- После деплоя верификация в обеих панелях пройдёт без DNS (meta-теги) и через файл (Яндекс)

@@ -29,12 +29,16 @@ export const SITE_URL = "https://xn--36-6kcao2dwaf3k.xn--p1ai";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  // ❗ Верификация Яндекс.Вебмастер / Google Search Console:
-  // после регистрации в панелях раскомментируйте и подставьте свои коды:
-  // verification: {
-  //   yandex: "<код из Яндекс.Вебмастер>",
-  //   google: "<код из Google Search Console>",
-  // },
+  // Верификация панелей вебмастеров (коды предоставлены владельцем сайта):
+  // - Google Search Console: meta-тег google-site-verification
+  //   (альтернатива — DNS TXT, уже не требуется, пока meta в билде)
+  // - Яндекс.Вебмастер: meta-тег yandex-verification
+  //   (плюс файл yandex_40b673b993338f11.html в public/ — двойная схема,
+  //    сработает любой из способов)
+  verification: {
+    google: "S247pV9rj4NrXLqqU0EscFlY73aGiRyO-bfPHkcgorM",
+    yandex: "40b673b993338f11",
+  },
   title: "СНАРЯГА36 — Маскировка нового поколения. ИК-защитная экипировка",
   description:
     "Разрабатываем и производим экипировку из экранирующих тканей, снижающих заметность в инфракрасном диапазоне. Защита от тепловизионных средств наблюдения.",
