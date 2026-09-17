@@ -57,7 +57,14 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Снаряга36" }],
   icons: {
-    icon: "/logo.svg",
+    // favicon.ico в корне обязателен: робот Яндекса ищет иконку именно по
+    // адресу /favicon.ico — без него иконки в выдаче Яндекса не будет.
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48" },
+      { url: "/logo.svg", type: "image/svg+xml" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
   },
   openGraph: {
     title: "СНАРЯГА36 — Маскировка нового поколения",
