@@ -1,3 +1,6 @@
+# robots.txt для снаряга36.рф (punycode: xn--36-6kcao2dwaf3k.xn--p1ai)
+# Сайт полностью открыт для индексации.
+
 User-agent: Googlebot
 Allow: /
 
@@ -10,5 +13,9 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
+# Не блокируем /_next/ — роботам нужны JS/CSS для рендеринга (Google: "no-blocking")
+
 User-agent: *
 Allow: /
+
+Sitemap: https://xn--36-6kcao2dwaf3k.xn--p1ai/sitemap.xml

@@ -216,6 +216,52 @@ export const VIDEO_META: VideoMeta[] = [
 
 ---
 
+## 🔍 SEO и индексация (снаряга36.рф)
+
+Всё из «базового набора» уже генерируется билдером и попадает в `out/`
+(и в копию `static-build/`):
+
+| Элемент | Где генерируется | Что в итоге |
+|---------|------------------|-------------|
+| `<title>`, `<meta description>`, keywords, OG, Twitter | `src/app/layout.tsx` (`export const metadata`) | В `<head>` каждой страницы |
+| Canonical + `og:url` | `metadataBase` в `layout.tsx` | `https://xn--36-6kcao2dwaf3k.xn--p1ai/` |
+| `og:image` (растровый, 1344×768) | `layout.tsx` | `/products/ir-after.png` — превью для ВК/Telegram |
+| Schema.org JSON-LD (Organization, Product×14, FAQPage) | `src/components/site/StructuredData.tsx` | Блок `<script type="application/ld+json">` |
+| `robots.txt` + директива `Sitemap:` | `public/robots.txt` | Копируется билдером как есть |
+| `sitemap.xml` | `src/app/sitemap.ts` | Генерируется при `next build` → `out/sitemap.xml` |
+
+Сайт — статический экспорт (`output: 'export'`): весь контент предрендерен
+в HTML, JS-рендеринг не мешает роботам видеть текст. `noindex` нигде нет.
+
+### После деплоя — обязательные ручные шаги
+
+1. **Яндекс.Вебмастер** (webmaster.yandex.ru) → добавить `https://снаряга36.рф`
+   → подтвердить права (DNS или HTML-файл) → «Индексирование» →
+   «Переобход страниц» → отправить `/` → «Файлы Sitemap» → добавить
+   `/sitemap.xml`.
+2. **Google Search Console** (search.google.com/search-console) → добавить
+   ресурс (домен или URL-prefix) → отправить `https://снаряга36.рф/sitemap.xml`
+   → «Проверка URL» → запросить индексирование главной.
+3. **Коды верификации через meta-теги** (если не хотите DNS/файл):
+   в `src/app/layout.tsx` раскомментируйте блок и подставьте коды:
+
+   ```ts
+   verification: {
+     yandex: "<код из Яндекс.Вебмастер>",
+     google: "<код из Google Search Console>",
+   },
+   ```
+
+   Затем `bun run build` и обновить `static-build/`.
+4. **Локальные сигналы**: Яндекс.Карты + 2ГИС с ссылкой на сайт,
+   ссылка в шапке профилей ВК/Telegram (VK-сообщество уже указано
+   в JSON-LD `Organization.sameAs`).
+
+Проверка индексации: в поиске ввести `site:снаряга36.рф`
+или `site:xn--36-6kcao2dwaf3k.xn--p1ai`.
+
+---
+
 ## 📜 Скрипты
 
 | Команда | Действие |

@@ -291,3 +291,22 @@ Stage Summary:
 - Works fully offline as SPA (no server needed at runtime)
 - Deploy to GitHub Pages: Settings → Pages → branch main / folder /static-build
 - To rebuild: `bun run build` then `cp -r out/* static-build/`
+
+---
+Task ID: SEO-VERIFY
+Agent: main (Super Z sandbox)
+Task: Применить SEO-план индексации к статик-билду и проверить, что билдер включает SEO-элементы в итоговую статику.
+
+Work Log:
+- Аудит: в закоммиченном static-build/ были title/description/OG/JSON-LD, НО отсутствовали sitemap.xml, canonical, og:url, og:image, а robots.txt был без директивы Sitemap
+- layout.tsx: добавлены metadataBase (punycode xn--36-6kcao2dwaf3k.xn--p1ai), alternates.canonical, og:url, og:image=/products/ir-after.png (растровый, 1344x768), twitter:card=summary_large_image, закомментированный блок verification для Яндекс/Google
+- public/robots.txt: добавлена директива Sitemap (punycode), поясняющие комментарии
+- src/app/sitemap.ts: новый metadata-роут — генерирует out/sitemap.xml при next build (force-static)
+- Пересборка: bun install && bun run build — OK, 4 статических роута (/, /_not-found, /sitemap.xml)
+- Верификация out/ скриптом scripts-копии: 27/27 PASS (title, description, canonical, og:*, JSON-LD Organization/Product/FAQPage, нет noindex, предрендеренный контент ~17.7k символов, robots.txt с Sitemap, sitemap.xml валидный с lastmod)
+- Песочница: python http.server :8765 на out/ — /, /robots.txt, /sitemap.xml, /products/ir-after.png, /logo.svg → все HTTP 200; agent-browser: title корректный, 18 секций, H1 «НЕВИДИМОСТЬ В ИК-СПЕКТРЕ», JSON-LD в DOM, ошибок консоли нет, скриншот подтверждает рендеринг
+- static-build/ заменён новой сборкой + .nojekyll; README.md дополнен разделом «SEO и индексация» с чек-листом ручных шагов
+
+Stage Summary:
+- Статик-билдер (next build) теперь включает полный SEO-набор в итоговую статику: проверено автоматически (27/27) и в headless-браузере
+- Осталось вручную (вне кода): регистрация в Яндекс.Вебмастер/GSC + верификация (код в layout.tsx verification), отправка sitemap, Яндекс.Карты/2ГИС, бэклинки ВК/Telegram
