@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useSyncExternalStore, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 interface Props {
   /** Основное изображение (показывается по умолчанию) */
@@ -35,9 +36,16 @@ function getCanHoverServer(): boolean {
  * HoverZoom — floating preview, следующий за курсором.
  *
  * При наведении на дочерний контент (children) рядом с курсором появляется
- * увеличенное изображение товара (260×260). Preview следует за курсором,
+ * увеличенное изображение товара (240×360). Preview следует за курсором,
  * не выходит за пределы viewport. На тач-устройствах не активируется
  * (pointer: coarse → компонент просто не показывает preview).
+ *
+ * ВАЖНО: preview рендерится через createPortal прямо в document.body.
+ * position:fixed внутри предка с transform/filter/backdrop-filter/
+ * will-change позиционируется от ЭТОГО предка, а не от viewport — превью
+ * «прилипает» к карточке и улетает к её краю. Портал в body выводит
+ * preview из-под любых transform-предков (карточки имеют group-hover:scale,
+ * transition-transform и т.п.) — координаты clientX/clientY всегда честные.
  *
  * Используется в карточках каталога для быстрого просмотра товара
  * без открытия модалки.
@@ -55,8 +63,10 @@ export default function HoverZoom({ src, alt, hoverSrc, children }: Props) {
   );
 
   const onMove = useCallback((e: React.MouseEvent) => {
-    const previewW = 260;
-    const previewH = 260;
+    // Габариты должны совпадать с реальным размером превью ниже (240×360),
+    // иначе кламп к границам viewport считается по неверной геометрии.
+    const previewW = 240;
+    const previewH = 360;
     const margin = 16;
     const vw = window.innerWidth;
     const vh = window.innerHeight;
@@ -98,9 +108,10 @@ export default function HoverZoom({ src, alt, hoverSrc, children }: Props) {
     >
       {children}
 
-      {/* Floating preview — рендерится через портал в body, чтобы не
-          обрезался overflow-контейнерами карточки. */}
-      {active && canHover && (
+      {/* Floating preview — портал в body: fixed координируются от viewport,
+          а не от ближайшего transform-предка (см. комментарий к компоненту). */}
+      {active && canHover &&
+        createPortal(
         <div
           className="fixed z-[1500] pointer-events-none"
           style={{
@@ -146,7 +157,8 @@ export default function HoverZoom({ src, alt, hoverSrc, children }: Props) {
             <span className="absolute bottom-1 left-1 w-3 h-3 border-b border-l border-[var(--olive)]" aria-hidden="true" />
             <span className="absolute bottom-1 right-1 w-3 h-3 border-b border-r border-[var(--olive)]" aria-hidden="true" />
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

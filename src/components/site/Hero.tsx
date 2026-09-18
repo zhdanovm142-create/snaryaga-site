@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * Hero с видео-фоном, IR-фильтром, scanlines, parallax-эффектом.
@@ -10,6 +10,21 @@ import { useEffect, useState } from "react";
  */
 export default function Hero() {
   const [scrollY, setScrollY] = useState(0);
+  // Видео проявляется только после реального старта воспроизведения (событие
+  // «playing»): нет файла, медленная сеть или браузер заблокировал автоплей —
+  // под видео всегда лежит постер, чёрной дыры не будет ни в каком сценарии.
+  const [videoOn, setVideoOn] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Синхронизация после гидратации: автоплей в статическом HTML может
+  // стартовать ДО того, как React повесит обработчик onPlaying (видео в кэше,
+  // медленный JS) — нативное «playing» тогда потеряно, и videoOn навсегда
+  // остался бы false (видео играет за opacity-0, посетитель видит постер).
+  // Если видео уже играет на момент монтирования — проявляем его сразу.
+  useEffect(() => {
+    const v = videoRef.current;
+    if (v && !v.paused && v.readyState >= 2) setVideoOn(true);
+  }, []);
 
   // Parallax на скролле
   useEffect(() => {
@@ -24,23 +39,43 @@ export default function Hero() {
       className="relative min-h-screen flex items-end px-6 sm:px-12 pb-24 overflow-hidden"
       aria-label="Hero"
     >
-      {/* Video background (parallax: slow) */}
-      <video
-        className="hero-video absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover z-0"
+      {/* Video background (parallax: slow).
+
+          Архитектура фолбэка: постер и видео лежат в общем контейнере с
+          IR-фильтром и parallax-transform. Постер — нижний слой, виден всегда;
+          видео — верхний слой с opacity:0 и проявляется только по событию
+          «playing». Если /hero.mp4 отдает 404, видео так и останется
+          прозрачным — посетитель видит постер, а не чёрный квадрат. */}
+      <div
+        className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto z-0"
         style={{
           filter:
             "invert(1) brightness(0.4) contrast(2) hue-rotate(120deg) saturate(3)",
           mixBlendMode: "multiply",
           transform: `translate(-50%, calc(-50% + ${scrollY * 0.3}px))`,
         }}
-        autoPlay
-        muted
-        loop
-        playsInline
-        poster="/hero-poster.svg"
       >
-        <source src="/hero.mp4" type="video/mp4" />
-      </video>
+        {/* Постер — нижний слой, работает и без видео */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url(/hero-poster.svg)" }}
+          aria-hidden="true"
+        />
+        <video
+          ref={videoRef}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
+            videoOn ? "opacity-100" : "opacity-0"
+          }`}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          onPlaying={() => setVideoOn(true)}
+        >
+          <source src="/hero.mp4" type="video/mp4" />
+        </video>
+      </div>
 
       {/* Scanlines (parallax: medium) */}
       <div
