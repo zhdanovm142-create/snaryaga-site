@@ -141,6 +141,9 @@
   }
   html {
     scroll-behavior: smooth;
+    /* Якорные ссылки (#products, #tech, ...) не прячутся под fixed-хедером
+       (72px) — при переходе по анкору страница отступает сверху на 84px. */
+    scroll-padding-top: 84px;
   }
   body {
     background: var(--bg);
