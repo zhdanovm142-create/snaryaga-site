@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * Hero с видео-фоном, IR-фильтром, scanlines, parallax-эффектом.
@@ -14,6 +14,17 @@ export default function Hero() {
   // «playing»): нет файла, медленная сеть или браузер заблокировал автоплей —
   // под видео всегда лежит постер, чёрной дыры не будет ни в каком сценарии.
   const [videoOn, setVideoOn] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Синхронизация после гидратации: автоплей в статическом HTML может
+  // стартовать ДО того, как React повесит обработчик onPlaying (видео в кэше,
+  // медленный JS) — нативное «playing» тогда потеряно, и videoOn навсегда
+  // остался бы false (видео играет за opacity-0, посетитель видит постер).
+  // Если видео уже играет на момент монтирования — проявляем его сразу.
+  useEffect(() => {
+    const v = videoRef.current;
+    if (v && !v.paused && v.readyState >= 2) setVideoOn(true);
+  }, []);
 
   // Parallax на скролле
   useEffect(() => {
@@ -51,6 +62,7 @@ export default function Hero() {
           aria-hidden="true"
         />
         <video
+          ref={videoRef}
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
             videoOn ? "opacity-100" : "opacity-0"
           }`}
