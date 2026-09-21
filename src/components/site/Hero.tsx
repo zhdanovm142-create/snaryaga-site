@@ -38,6 +38,11 @@ export default function Hero() {
     <section
       className="relative min-h-screen flex items-end px-6 sm:px-12 pb-24 overflow-hidden"
       aria-label="Hero"
+      style={{
+        // Базовый слой: под видео и под постером. Если видео не загрузилось —
+        // посетитель видит этот градиент (плюс постер), а не белый фон.
+        background: "linear-gradient(135deg, #1a2010 0%, #0d0d0d 60%)",
+      }}
     >
       {/* Video background (parallax: slow).
 
@@ -51,7 +56,9 @@ export default function Hero() {
         style={{
           filter:
             "invert(1) brightness(0.4) contrast(2) hue-rotate(120deg) saturate(3)",
-          mixBlendMode: "multiply",
+          // БЕЗ mix-blend-mode: multiply — фон под видео почти чёрный (#0d0d0d),
+          // multiply умножает каждый пиксель на ~5% яркости и видео превращается
+          // в чёрный экран. IR-фильтр выше уже даёт нужную ночную эстетику.
           transform: `translate(-50%, calc(-50% + ${scrollY * 0.3}px))`,
         }}
       >
@@ -89,12 +96,16 @@ export default function Hero() {
         }}
       />
 
-      {/* Dark gradient overlay (parallax: fast) */}
+      {/* Dark gradient overlay (parallax: fast).
+
+          ТОЛЬКО полупрозрачный градиент: нижний непрозрачный слой
+          (#1a2010 → #0d0d0d) перенесён на фон самой section. Второй слой здесь
+          делал весь оверлей глухим — видео под ним (z-0) было не видно вовсе. */}
       <div
         className="absolute inset-0 z-[2]"
         style={{
           background:
-            "linear-gradient(180deg, rgba(13,13,13,0.3) 0%, rgba(13,13,13,0.1) 40%, rgba(13,13,13,0.95) 100%), linear-gradient(135deg, #1a2010 0%, #0d0d0d 60%)",
+            "linear-gradient(180deg, rgba(13,13,13,0.3) 0%, rgba(13,13,13,0.1) 40%, rgba(13,13,13,0.95) 100%)",
           transform: `translateY(${scrollY * 0.1}px)`,
         }}
       />
