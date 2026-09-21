@@ -10,12 +10,17 @@
  */
 import { PRODUCTS } from "@/data/products";
 
+// Punycode-форма снаряга36.рф — Google требует АБСОЛЮТНЫЕ URL в Product.image.
+// Дублируем константу (не импортируем из layout.tsx — там цикл: layout импортирует StructuredData).
+const SITE_URL = "https://xn--36-6kcao2dwaf3k.xn--p1ai";
+
 const ORG = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Снаряга36",
   alternateName: "СНАРЯГА 36",
-  url: "https://снаряга36.рф/",
+  url: SITE_URL,
+  logo: { "@type": "ImageObject", url: `${SITE_URL}/logo.svg` },
   description:
     "Разработка и производство экипировки из экранирующих тканей для снижения заметности в инфракрасном диапазоне.",
   telephone: "+7-951-559-66-22",
@@ -34,7 +39,7 @@ const WEBSITE = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "Снаряга36",
-  url: "https://снаряга36.рф/",
+  url: SITE_URL,
   inLanguage: "ru-RU",
   description:
     "Маскировка нового поколения — ИК-защитная экипировка: рюкзаки, накидки, костюмы из экранирующих тканей.",
@@ -44,29 +49,47 @@ const SIZABLE_CATEGORIES = new Set(["IR Suit", "Reversible Suit", "Full Kit"]);
 const SIZE_VARIANTS = ["S", "M", "L", "XL", "XXL"];
 
 const PRODUCT_LIST = PRODUCTS.map((p) => {
+  // Фото: абсолютные URL (Google не принимает относительные пути в Product.image).
+  // main и hover могут совпадать (фолбэки) — дедуплицируем.
+  const image = Array.from(new Set([p.images.main, p.images.hover].filter(Boolean)))
+    .map((src) => `${SITE_URL}${src}`);
+
   const sizable = SIZABLE_CATEGORIES.has(p.category);
   // Доступность по остатку: 0 = OutOfStock, иначе InStock.
   const inStock = p.stock === undefined || p.stock > 0;
-  const offers: Record<string, unknown> = {
-    "@type": "Offer",
-    priceCurrency: "RUB",
-    price: p.price === "По запросу" ? "0" : p.price,
-    availability: inStock
-      ? "https://schema.org/InStock"
-      : "https://schema.org/OutOfStock",
-    seller: { "@type": "Organization", name: "Снаряга36" },
-  };
-  // Остаток на складе — через inventoryLevel (ItemListElementInventory).
-  if (p.stock !== undefined) {
-    offers.inventoryLevel = {
-      "@type": "QuantitativeValue",
-      value: p.stock,
-    };
+
+  // «По запросу» НЕ превращаем в price:"0": нулевая цена — это отказ
+  // в merchant-listing и обман в сниппете. Google требует offers.price > 0,
+  // поэтому у товаров без публичной цены offers не отдаём вовсе — товар
+  // участвует в «Описании товара» (product snippets), но не в
+  // «Данных о товарах» (merchant listings), где без цены всё равно отказ.
+  const hasPublicPrice = p.price !== "По запросу";
+  const offers: Record<string, unknown> | undefined = hasPublicPrice
+    ? {
+        "@type": "Offer",
+        priceCurrency: "RUB",
+        price: p.price,
+        availability: inStock
+          ? "https://schema.org/InStock"
+          : "https://schema.org/OutOfStock",
+        seller: { "@type": "Organization", name: "Снаряга36" },
+      }
+    : undefined;
+
+  if (offers) {
+    // Остаток на складе — через inventoryLevel (ItemListElementInventory).
+    if (p.stock !== undefined) {
+      offers.inventoryLevel = {
+        "@type": "QuantitativeValue",
+        value: p.stock,
+      };
+    }
+    // Для размерных товаров — sizeVariant + acceptedSize.
+    if (sizable) {
+      offers.sizeVariant = SIZE_VARIANTS;
+    }
   }
-  // Для размерных товаров — sizeVariant + acceptedSize.
-  if (sizable) {
-    offers.sizeVariant = SIZE_VARIANTS;
-  }
+
   return {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -75,7 +98,8 @@ const PRODUCT_LIST = PRODUCTS.map((p) => {
     category: p.category,
     brand: { "@type": "Brand", name: "Снаряга36" },
     sku: p.id,
-    offers,
+    image,
+    ...(offers ? { offers } : {}),
   };
 });
 
