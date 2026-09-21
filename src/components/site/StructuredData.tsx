@@ -59,10 +59,19 @@ const PRODUCT_LIST = PRODUCTS.map((p) => {
   const inStock = p.stock === undefined || p.stock > 0;
 
   // «По запросу» НЕ превращаем в price:"0": нулевая цена — это отказ
-  // в merchant-listing и обман в сниппете. Google требует offers.price > 0,
-  // поэтому у товаров без публичной цены offers не отдаём вовсе — товар
-  // участвует в «Описании товара» (product snippets), но не в
-  // «Данных о товарах» (merchant listings), где без цены всё равно отказ.
+  // в merchant listings и обман в сниппете.
+  //
+  // ОСОЗНАННЫЙ ТРЕЙДОФФ (ответ на P1 из Codex Review): без offers товары
+  // теряют элегибельность в product snippets — Google требует хотя бы одно
+  // из свойств: offers / review / aggregateRating
+  // (developers.google.com/search/docs/appearance/structured-data/product-snippet).
+  // Честных альтернатив для «По запросу» нет:
+  //   - offers без цены → крит «Missing field price» в merchant listings
+  //     (подтверждено практикой GSC, support.google.com);
+  //   - фейковые review/aggregateRating → structured data spam, ручной фильтр.
+  // Разметку Product оставляем: её читает Яндекс, а name/image/brand/sku
+  // работают на понимание страницы. Появятся публичные цены — вернуть offers,
+  // и товары станут элегибельны в обоих отчётах сразу.
   const hasPublicPrice = p.price !== "По запросу";
   const offers: Record<string, unknown> | undefined = hasPublicPrice
     ? {
