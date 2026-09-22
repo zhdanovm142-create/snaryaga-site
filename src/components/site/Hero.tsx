@@ -55,7 +55,12 @@ export default function Hero() {
         className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto z-0"
         style={{
           filter:
-            "invert(1) brightness(0.4) contrast(2) hue-rotate(120deg) saturate(3)",
+            // brightness(0.412): прирост видео +22.6% по замеру. Итерировано по
+            // фактическому замеру средней luma видео-зоны (headless, 3 кадра):
+            // b=0.48 → +111% (contrast(2) удваивает дельту), b=0.42 → +32%,
+            // b=0.412 → +22.6% — целевой коридор владельца «заметнее на 17–23%».
+            // База замера: luma 15.77 (b=0.4) → 19.33 (b=0.412), зона без текста.
+            "invert(1) brightness(0.412) contrast(2) hue-rotate(120deg) saturate(3)",
           // БЕЗ mix-blend-mode: multiply — фон под видео почти чёрный (#0d0d0d),
           // multiply умножает каждый пиксель на ~5% яркости и видео превращается
           // в чёрный экран. IR-фильтр выше уже даёт нужную ночную эстетику.
