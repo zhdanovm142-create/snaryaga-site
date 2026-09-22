@@ -35,15 +35,51 @@ export default function Tech() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         {/* Animated IR target visual */}
         <div className="reveal aspect-square bg-[var(--bg2)] border border-[var(--border-brand)] relative overflow-hidden">
+          {/* Видео-демонстрация на весь квадрат: тепловизионная съёмка с
+              квадрокоптера (white-hot, HUD прибора сохранён — достоверность
+              «полевых испытаний»). Стиль как в hero: ИК-фильтр переводит
+              grayscale-термограмму в фирменный зелёный тон + градиентное
+              затемнение поверх. Фолбэк по архитектуре hero: пока видео
+              грузится — постер; если не загрузилось — видео-слой прозрачен
+              и остаётся радар на фоне сетки, деградации нет. */}
+          <video
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{
+              filter:
+                // sepia-трюк: исходник grayscale (white-hot), hue-rotate по
+                // серому ничего не даёт — сначала sepia(1) наводит тон,
+                // затем поворот в зелёный. Итог — «ночной прибор» как в шапке.
+                "sepia(1) hue-rotate(90deg) saturate(1.6) brightness(0.6) contrast(1.2)",
+            }}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster="/tech-ir-poster.jpg"
+            aria-label="Пример тепловизионной съёмки: человек на дороге в ИК-диапазоне"
+          >
+            <source src="/tech-ir.mp4" type="video/mp4" />
+          </video>
+          {/* Градиентное затемнение как в hero (верх/низ темнее, центр
+              прозрачный) — притемняет яркий white-hot-кадр, сохраняя
+              читаемость сцены; поверх идут эффекты радара */}
           <div
-            className="absolute inset-0"
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "linear-gradient(180deg, rgba(13,13,13,0.4) 0%, rgba(13,13,13,0.15) 45%, rgba(13,13,13,0.65) 100%)",
+            }}
+          />
+          <div
+            className="absolute inset-0 pointer-events-none"
             style={{
               background:
                 "radial-gradient(circle at 50% 50%, rgba(92,107,60,0.18) 0%, transparent 55%), radial-gradient(circle at 30% 30%, rgba(139,115,85,0.08) 0%, transparent 50%)",
             }}
           />
           <div
-            className="absolute inset-0"
+            className="absolute inset-0 pointer-events-none"
             style={{
               backgroundImage:
                 "linear-gradient(rgba(92,107,60,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(92,107,60,0.1) 1px, transparent 1px)",
@@ -52,38 +88,20 @@ export default function Tech() {
           />
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="relative w-[70%] h-[70%]">
-              {/* Видео-демонстрация: тепловизионная съёмка с квадрокоптера
-                  (white-hot, HUD прибора сохранён — достоверность «полевых
-                  испытаний»). Нижний слой бокса; ИК-кольца радара, перекрестие
-                  и сканлайн живут поверх — эффект «захвата цели» тепловизором.
-                  Фолбэк по архитектуре hero: пока видео грузится — постер;
-                  если не загрузилось — бокс прозрачен и остаётся анимация
-                  радара на фоне сетки, деградации нет. */}
-              <video
-                className="absolute inset-0 w-full h-full object-cover"
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="metadata"
-                poster="/tech-ir-poster.jpg"
-                aria-label="Пример тепловизионной съёмки: человек на дороге в ИК-диапазоне"
-              >
-                <source src="/tech-ir.mp4" type="video/mp4" />
-              </video>
-              {/* Лёгкое затемнение: термограмма white-hot яркая — приглушаем,
-                  чтобы оливковые кольца и перекрестие читались поверх */}
-              <div className="absolute inset-0 bg-[rgba(13,13,13,0.25)] pointer-events-none" />
+              {/* ИК-кольца радара, перекрестие и сканлайн поверх видео —
+                  эффект «захвата цели» тепловизором. Прозрачность колец
+                  снижена (плотнее, чем на пустом фоне), чтобы читались
+                  поверх живого кадра */}
               <div
-                className="absolute inset-0 rounded-full border border-[rgba(122,143,82,0.4)]"
+                className="absolute inset-0 rounded-full border border-[rgba(122,143,82,0.6)]"
                 style={{ animation: "sn-ir-pulse 3s ease-out infinite" }}
               />
               <div
-                className="absolute inset-[15%] rounded-full border border-[rgba(122,143,82,0.5)]"
+                className="absolute inset-[15%] rounded-full border border-[rgba(122,143,82,0.7)]"
                 style={{ animation: "sn-ir-pulse 3s ease-out infinite", animationDelay: "0.5s" }}
               />
               <div
-                className="absolute inset-[30%] rounded-full border border-[rgba(122,143,82,0.6)]"
+                className="absolute inset-[30%] rounded-full border border-[rgba(122,143,82,0.8)]"
                 style={{ animation: "sn-ir-pulse 3s ease-out infinite", animationDelay: "1s" }}
               />
               <div
@@ -91,8 +109,8 @@ export default function Tech() {
                 style={{ animation: "sn-ir-pulse 3s ease-out infinite", animationDelay: "1.5s" }}
               />
               <div className="absolute inset-[47%] rounded-full bg-[var(--olive-light)] shadow-[0_0_12px_rgba(122,143,82,0.9)]" />
-              <div className="absolute top-1/2 left-0 right-0 h-px bg-[rgba(122,143,82,0.3)]" />
-              <div className="absolute left-1/2 top-0 bottom-0 w-px bg-[rgba(122,143,82,0.3)]" />
+              <div className="absolute top-1/2 left-0 right-0 h-px bg-[rgba(122,143,82,0.5)]" />
+              <div className="absolute left-1/2 top-0 bottom-0 w-px bg-[rgba(122,143,82,0.5)]" />
               <div
                 className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[var(--olive-light)] to-transparent"
                 style={{ animation: "sn-ir-scan 3s linear infinite" }}
