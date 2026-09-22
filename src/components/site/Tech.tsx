@@ -52,6 +52,28 @@ export default function Tech() {
           />
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="relative w-[70%] h-[70%]">
+              {/* Видео-демонстрация: тепловизионная съёмка с квадрокоптера
+                  (white-hot, HUD прибора сохранён — достоверность «полевых
+                  испытаний»). Нижний слой бокса; ИК-кольца радара, перекрестие
+                  и сканлайн живут поверх — эффект «захвата цели» тепловизором.
+                  Фолбэк по архитектуре hero: пока видео грузится — постер;
+                  если не загрузилось — бокс прозрачен и остаётся анимация
+                  радара на фоне сетки, деградации нет. */}
+              <video
+                className="absolute inset-0 w-full h-full object-cover"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                poster="/tech-ir-poster.jpg"
+                aria-label="Пример тепловизионной съёмки: человек на дороге в ИК-диапазоне"
+              >
+                <source src="/tech-ir.mp4" type="video/mp4" />
+              </video>
+              {/* Лёгкое затемнение: термограмма white-hot яркая — приглушаем,
+                  чтобы оливковые кольца и перекрестие читались поверх */}
+              <div className="absolute inset-0 bg-[rgba(13,13,13,0.25)] pointer-events-none" />
               <div
                 className="absolute inset-0 rounded-full border border-[rgba(122,143,82,0.4)]"
                 style={{ animation: "sn-ir-pulse 3s ease-out infinite" }}
