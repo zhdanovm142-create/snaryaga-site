@@ -1,100 +1,95 @@
-"use client";
-
-import { useCallback, useEffect, useState } from "react";
-import { PRODUCTS, type Product } from "@/data/products";
-import Nav from "@/components/site/Nav";
+import dynamic from "next/dynamic";
+import SiteChrome from "@/components/site/SiteChrome";
 import Hero from "@/components/site/Hero";
 import Marquee from "@/components/site/Marquee";
 import Categories from "@/components/site/Categories";
-import CatalogToolbar from "@/components/site/CatalogToolbar";
-import Poncho from "@/components/site/Poncho";
-import Suits from "@/components/site/Suits";
-import BurgerChooser from "@/components/site/BurgerChooser";
+import SectionDivider from "@/components/site/SectionDivider";
 import Tech from "@/components/site/Tech";
 import Compare from "@/components/site/Compare";
+import CompareTable from "@/components/site/CompareTable";
 import Guarantees from "@/components/site/Guarantees";
-import ReviewsCarousel from "@/components/site/ReviewsCarousel";
-import Faq from "@/components/site/Faq";
 import SizeGuide from "@/components/site/SizeGuide";
 import About from "@/components/site/About";
 import Charity from "@/components/site/Charity";
-import Newsletter from "@/components/site/Newsletter";
-import Contact from "@/components/site/Contact";
 import Footer from "@/components/site/Footer";
-import OrderModal from "@/components/site/OrderModal";
-import ProductDetailModal from "@/components/site/ProductDetailModal";
-import FavoritesDrawer from "@/components/site/FavoritesDrawer";
-import CartDrawer from "@/components/site/CartDrawer";
-import CookieConsent from "@/components/site/CookieConsent";
-import Toast from "@/components/site/Toast";
-import CallFab from "@/components/site/CallFab";
-import BackToTop from "@/components/site/BackToTop";
-import ReadingProgress from "@/components/site/ReadingProgress";
-import SectionIndex from "@/components/site/SectionIndex";
-import CompareTable from "@/components/site/CompareTable";
-import IrCompare from "@/components/site/IrCompare";
-import LiveChat from "@/components/site/LiveChat";
-import RecentlyViewed from "@/components/site/RecentlyViewed";
-import SectionDivider from "@/components/site/SectionDivider";
-import KeyboardShortcuts from "@/components/site/KeyboardShortcuts";
-import { useScrollReveal } from "@/components/site/use-scroll";
 
-export default function Home() {
-  useScrollReveal();
-
-  const [orderProduct, setOrderProduct] = useState<string | null>(null);
-  const [detailProduct, setDetailProduct] = useState<Product | null>(null);
-  const [favoritesOpen, setFavoritesOpen] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
-
-  const openOrder = useCallback((name: string) => {
-    setOrderProduct(name);
-  }, []);
-  const closeOrder = useCallback(() => setOrderProduct(null), []);
-  const openDetail = useCallback((p: Product) => setDetailProduct(p), []);
-  const closeDetail = useCallback(() => setDetailProduct(null), []);
-  const openFavorites = useCallback(() => setFavoritesOpen(true), []);
-  const closeFavorites = useCallback(() => setFavoritesOpen(false), []);
-  const openCart = useCallback(() => setCartOpen(true), []);
-  const closeCart = useCallback(() => setCartOpen(false), []);
-  const showToast = useCallback((msg: string) => setToast(msg), []);
-  const dismissToast = useCallback(() => setToast(null), []);
-
-  // Deep-link: при загрузке с #product-{id} открываем модалку товара.
-  // setState в effect здесь оправдан — это разовая реакция на URL-hash при
-  // первичной загрузке (mount), не подписка на меняющийся стор.
-  useEffect(() => {
-    const hash = window.location.hash;
-    const m = hash.match(/^#product-(.+)$/);
-    if (!m) return;
-    const p = PRODUCTS.find((pr) => pr.id === m[1]);
-    if (p) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setDetailProduct(p);
-      // Снимаем hash, чтобы при закрытии модалки он не висел.
-      history.replaceState(null, "", window.location.pathname);
-    }
-  }, []);
-
+/**
+ * Процедурный скелетон для ленивых секций: на месте блока, пока браузер
+ * докачивает его JS-чанк, виден тихий пульсирующий прямоугольник в теме
+ * сайта. Высоты подобраны под реальную высоту секций, чтобы скролл-скип
+ * не прыгал.
+ */
+function SectionSkeleton({ h }: { h: string }) {
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--bg)]">
-      <ReadingProgress />
-      <Nav onOpenFavorites={openFavorites} onOpenCart={openCart} />
-      <SectionIndex />
+    <div className="sn-section" aria-hidden="true">
+      <div className={`w-full ${h} rounded-lg bg-[var(--bg2)] animate-pulse`} />
+    </div>
+  );
+}
+
+// Ниже фолда — клиентские секции через dynamic(): их HTML по-прежнему
+// пререндерится на сервере (SEO не страдает), но JS-код грузится отдельными
+// чанками по мере надобности, а не одним монолитным бандлом сверху.
+const CatalogToolbar = dynamic(() => import("@/components/site/CatalogToolbar"), {
+  loading: () => <SectionSkeleton h="min-h-[70vh]" />,
+});
+const RecentlyViewed = dynamic(() => import("@/components/site/RecentlyViewed"), {
+  loading: () => <SectionSkeleton h="h-40" />,
+});
+const Poncho = dynamic(() => import("@/components/site/Poncho"), {
+  loading: () => <SectionSkeleton h="min-h-[70vh]" />,
+});
+const Suits = dynamic(() => import("@/components/site/Suits"), {
+  loading: () => <SectionSkeleton h="min-h-[70vh]" />,
+});
+const BurgerChooser = dynamic(() => import("@/components/site/BurgerChooser"), {
+  loading: () => <SectionSkeleton h="min-h-[60vh]" />,
+});
+const IrCompare = dynamic(() => import("@/components/site/IrCompare"), {
+  loading: () => <SectionSkeleton h="h-[60vh]" />,
+});
+const Faq = dynamic(() => import("@/components/site/Faq"), {
+  loading: () => <SectionSkeleton h="h-96" />,
+});
+const ReviewsCarousel = dynamic(() => import("@/components/site/ReviewsCarousel"), {
+  loading: () => <SectionSkeleton h="h-96" />,
+});
+const Newsletter = dynamic(() => import("@/components/site/Newsletter"), {
+  loading: () => <SectionSkeleton h="h-64" />,
+});
+const Contact = dynamic(() => import("@/components/site/Contact"), {
+  loading: () => <SectionSkeleton h="min-h-[60vh]" />,
+});
+
+/**
+ * Главная страница — СЕРВЕРНЫЙ компонент.
+ *
+ * Что изменилось и зачем:
+ *  — Раньше файл начинался с "use client" и импортировал все 30+ секций:
+ *    браузер получал один огромный JS-бандл, включая код секций, до которых
+ *    пользователь мог не доскроллить.
+ *  — Теперь интерактивный слой (Nav, модалки, корзина, тосты, deep-link)
+ *    вынесен в SiteChrome, а секции — серверные: их JS вообще не отдаётся
+ *    браузеру, только готовый HTML.
+ *  — Действия (заказ, быстрый просмотр, тосты) секции берут из
+ *    SiteActionsContext вместо пропсов — пропс-прокидывание через сервер
+ *    невозможно в RSC, да оно и не нужно.
+ *  — Тяжёлые клиентские секции ниже фолда подключены через next/dynamic:
+ *    HTML пререндерится (SEO цел), JS грузится лениво, на месте секции —
+ *    процедурный скелетон.
+ */
+export default function Home() {
+  return (
+    <SiteChrome>
       <main className="flex-1">
         <Hero />
         <Marquee />
         <Categories />
-        <CatalogToolbar
-          onOrder={openOrder}
-          onQuickView={openDetail}
-          onAddToCartToast={(name) => showToast(`${name} добавлен в корзину`)}
-        />
-        <RecentlyViewed onQuickView={openDetail} />
+        <CatalogToolbar />
+        <RecentlyViewed />
         <Poncho />
-        <Suits onOrder={openOrder} onQuickView={openDetail} />
-        <BurgerChooser onQuickView={openDetail} onOrder={openOrder} />
+        <Suits />
+        <BurgerChooser />
         <SectionDivider variant="diamond" />
         <Tech />
         <SectionDivider variant="line" label="Инструкция" color="coyote" />
@@ -110,48 +105,10 @@ export default function Home() {
         <Charity />
         <SectionDivider variant="tag" label="Отзывы" color="olive" />
         <ReviewsCarousel />
-        <Newsletter onSubmitted={showToast} />
-        <Contact onSubmitted={showToast} />
+        <Newsletter />
+        <Contact />
       </main>
       <Footer />
-
-      <CallFab />
-      <BackToTop />
-      <LiveChat />
-
-      <OrderModal
-        productName={orderProduct}
-        onClose={closeOrder}
-        onSubmitted={showToast}
-      />
-      <ProductDetailModal
-        product={detailProduct}
-        onClose={closeDetail}
-        onOrder={(name) => {
-          closeDetail();
-          openOrder(name);
-        }}
-        onSelectRelated={openDetail}
-      />
-      <FavoritesDrawer
-        open={favoritesOpen}
-        onClose={closeFavorites}
-        onOrder={(name) => {
-          closeFavorites();
-          openOrder(name);
-        }}
-      />
-      <CartDrawer
-        open={cartOpen}
-        onClose={closeCart}
-        onOrder={(name) => {
-          closeCart();
-          openOrder(name);
-        }}
-      />
-      <CookieConsent />
-      <KeyboardShortcuts />
-      <Toast message={toast} onDismiss={dismissToast} />
-    </div>
+    </SiteChrome>
   );
 }

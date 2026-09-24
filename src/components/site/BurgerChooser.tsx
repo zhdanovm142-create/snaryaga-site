@@ -2,11 +2,7 @@
 
 import { useMemo } from "react";
 import { PRODUCTS, type Product } from "@/data/products";
-
-interface Props {
-  onQuickView: (p: Product) => void;
-  onOrder: (name: string) => void;
-}
+import { useSiteActions } from "@/components/site/SiteContext";
 
 /**
  * Матрица подбора костюма «Бугор».
@@ -22,7 +18,9 @@ interface Props {
  * Данные тянутся из PRODUCTS (coverage/layers/reversible/useCase) —
  * новая секция автоматически подхватит будущие модели.
  */
-export default function BurgerChooser({ onQuickView, onOrder }: Props) {
+export default function BurgerChooser() {
+  // Колбэки из SiteActionsContext вместо пропсов (page.tsx — серверный).
+  const { openDetail: onQuickView, openOrder: onOrder } = useSiteActions();
   const suits = useMemo(
     () =>
       PRODUCTS.filter(

@@ -193,7 +193,9 @@ export default function IrCompare() {
               "aria-valuetext": `${Math.round(pos)}% — виден ${pos > 50 ? "левый край (обычная камера)" : "правый край (тепловизор)"}`,
             })}
       >
-        {/* Тепловизор — нижний слой, виден справа от разделителя */}
+        {/* Тепловизор — нижний слой, виден справа от разделителя.
+            preload="none": ролики качаются только когда блок в зоне видимости
+            (стартует IntersectionObserver ниже) — до этого виден постер. */}
         {!fail.th && (
           <video
             ref={thRef}
@@ -202,7 +204,7 @@ export default function IrCompare() {
             muted
             loop
             playsInline
-            preload="auto"
+            preload="none"
             aria-label="Тепловизор: объект в ИК-костюме Бугор — тёплый силуэт подавлен, сливается с фоном"
             onError={() => setFail((f) => ({ ...f, th: true }))}
             className="absolute inset-0 w-full h-full object-cover pointer-events-none"
@@ -230,7 +232,7 @@ export default function IrCompare() {
               muted
               loop
               playsInline
-              preload="auto"
+              preload="none"
               aria-label="Обычная камера: человек в маскировочном костюме Бугор сливается с растительностью"
               onError={() => setFail((f) => ({ ...f, cam: true }))}
               className="absolute inset-0 w-full h-full object-cover pointer-events-none"

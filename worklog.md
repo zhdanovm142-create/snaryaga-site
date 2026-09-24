@@ -324,3 +324,27 @@ Work Log:
 
 Stage Summary:
 - После деплоя верификация в обеих панелях пройдёт без DNS (meta-теги) и через файл (Яндекс)
+
+---
+Task ID: PERF-1
+Agent: main (Super Z sandbox)
+Task: Оптимизация производительности статик-экспорта по 5-пунктовому плану владельца (изображения, code splitting, процедурные свотчи, шрифты, видео-фасады).
+
+Work Log:
+- P1 Картинки: scripts/optimize-images.mjs (sharp, WebP q82, max 1280px, идемпотентный). 39 файлов: 11.4 МБ → 8.3 МБ. Исходники удалены из public/ после конверсии (остались в git-истории). Исключения: ir-after.png (og:image), *-poster.*, случаи «webp тяжелее jpg» (leggings-1.jpg остался оригиналом — ссылка откачена на /products/leggings-1.jpg после того, как e2e поймал 404). Пути в products.ts (28) и Poncho.tsx (13) → /products-opt/*.webp.
+- P5a Видео: scripts/optimize-videos.mjs (ffmpeg CRF 28, -an, +faststart, защита от повторного перекодирования через scripts/.video-opt-cache.json и правило «принимать только если легче на ≥10%»). hero.mp4 3.9→2.1 МБ, tech-ir.mp4 9.0→6.9 МБ, ir-camera.mp4 — выигрыш <10%, оставлен, ir-thermal.mp4 — ниже порога 1 МБ. Итого 13.0→9.0 МБ.
+- P5b Фасады: новый LazyVideo.tsx (клиентский, IntersectionObserver rootMargin 300px, play/pause по видимости) — подключён в Tech (серверная секция). Hero: <video> монтируется только после requestIdleCallback (fallback setTimeout 1800ms) — LCP остаётся на постере. IrCompare: preload="auto" → "none" (ролики грузятся только в зоне видимости, старт/пауза уже были на IO).
+- P3 Свотчи: новый CamoSwatch.tsx — процедурные CSS-паттерны (мох/пиксель/мультикам/зелёный/синий/олива/койот), 0 байт. Интегрирован в кнопки расцветок Poncho вместо цветных квадратиков; превью-сцена теперь рендерит только АКТИВНОЕ фото (было 5 слоёв-картинок), смена — remount с fade-in (animate-in из tw-animate-css).
+- P2 Code splitting: page.tsx → Server Component. Новые SiteContext.tsx (useSiteActions: openOrder/openDetail/openFavorites/openCart/showToast) + SiteChrome.tsx ("use client": всё состояние модалок, deep-link #product-*, useScrollReveal, Nav, оверлеи, FAB, тосты). Потребители переведены с пропсов на контекст: CatalogToolbar, Suits, BurgerChooser, RecentlyViewed, Newsletter, Contact. 10 клиентских секций ниже фолда — через next/dynamic с процедурными скелетонами (HTML пререндерится, SEO цел). Чисто серверные секции больше не попадают в JS-бандл.
+- P4 Шрифты: проверено — уже оптимально (next/font/google, display: swap, cyrillic-сабсеты, автопредзагрузка). Изменений не требуется.
+- Бонус из e2e: лайтбокс Poncho не закрывался по Escape (только клик) — добавлен обработчик; открытый лайтбокс блокировал указатель по всей странице.
+- eslint.config.mjs: + "static-build/**" в ignores (минифицированные бандлы давали 1795 warnings и 12 errors). bun run lint — чисто.
+- Верификация dev (agent-browser): 0 ошибок страницы/консоли, 16 секций; корзина добавляет товар и открывается (localStorage sn36-cart); модалка деталей открывается/закрывается (Esc); свотч «Пиксель» переключает превью на cover-2.webp; LazyVideo: 0 видео до скролла → играет после; IrCompare — 2 ролика играют в зоне видимости, драг разделителя 50→40→36 по координатам; mobile iPhone 14 — без горизонтального скролла, счётчик корзины сохраняется.
+- Билд: bun run build → out/ 26 МБ (было 32 МБ в static-build), JS-чанки 1.2 МБ суммарно, крупнейший 224 КБ; sitemap.xml/robots/SEO-мета на месте; preload="none" ×2 в статике; hero-видео в HTML отсутствует (монтируется после idle).
+- static-build/ пересобран + .nojekyll; автономная проверка python http.server: /, webp, jpg, mp4, sitemap, robots — все 200; в браузере на статике: title, 16 секций, 48 webp-картинок, корзина работает, 0 ошибок.
+- README.md: разделы «Скрипты» (оптимизаторы) и «Производительность» (6 архитектурных решений).
+
+Stage Summary:
+- Все 5 пунктов плана внедрены и проверены в браузере (dev + статика).
+- Первоначальная загрузка: 0 видео при открытии (было 3 autoplay ≈ 17 МБ), продуктовые фото −27% веса, Poncho грузит 1 фото вместо 5, серверные секции выпали из JS-бандла, нижние секции — ленивые чанки.
+- Артефакт деплоя static-build/ 32 → 26 МБ. SEO-набор (title/canonical/OG/JSON-LD/sitemap/верификации) не тронут и подтверждён в новой сборке.

@@ -7,16 +7,11 @@ import {
   CATEGORY_ORDER,
   type Product,
 } from "@/data/products";
+import { useSiteActions } from "@/components/site/SiteContext";
 
 export type SortKey = "default" | "capacity" | "name";
 export type FilterCategory = "all" | string;
 export type ViewMode = "grid" | "list";
-
-interface Props {
-  onOrder: (productName: string) => void;
-  onQuickView: (product: Product) => void;
-  onAddToCartToast: (productName: string) => void;
-}
 
 /** Извлекаем объём из capacity (напр. "20L" → 20) для сортировки */
 function capacityToNumber(c?: string): number {
@@ -57,11 +52,16 @@ const SORT_LABELS: { id: SortKey; label: string }[] = [
   { id: "name", label: "По названию" },
 ];
 
-export default function CatalogToolbar({
-  onOrder,
-  onQuickView,
-  onAddToCartToast,
-}: Props) {
+export default function CatalogToolbar() {
+  // Действия берутся из SiteActionsContext — page.tsx больше не прокидывает
+  // колбэки пропсами через сервер (см. SiteContext.tsx).
+  const { openOrder, openDetail, showToast } = useSiteActions();
+  // Внутренний код оперирует прежними именами — теперь это псевдонимы контекста.
+  const onOrder = openOrder;
+  const onQuickView = openDetail;
+  const onAddToCartToast = (productName: string) =>
+    showToast(`${productName} добавлен в корзину`);
+
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<FilterCategory>("all");
   const [sort, setSort] = useState<SortKey>("default");

@@ -5,7 +5,9 @@
   "description": "СНАРЯГА36 — ИК-защитная экипировка. Static export (SSG/SPA) лендинг-магазин.",
   "scripts": {
     "dev": "next dev -p 3000",
-    "build": "next build",
+    "optimize:images": "bun scripts/optimize-images.mjs",
+    "optimize:videos": "bun scripts/optimize-videos.mjs",
+    "build": "bun run optimize:images && bun run optimize:videos && next build",
     "start": "next start",
     "lint": "eslint ."
   },
@@ -63,6 +65,7 @@
     "bun-types": "^1.3.4",
     "eslint": "^9",
     "eslint-config-next": "^16.1.1",
+    "sharp": "^0.35.4",
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.5",
     "typescript": "^5"
