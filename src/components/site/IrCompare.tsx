@@ -3,22 +3,34 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
- * Интерактивный слайдер «До / После» ИК-визуализации.
+ * Интерактивный слайдер «Камера / Тепловизор» — живая видеосъёмка одной сцены.
  *
- * Показывает два тепловизионных снимка (без защиты — яркий силуэт,
- * с защитой «Бугор» — силуэт невидим). Перетаскивая разделитель,
- * пользователь наглядно видит разницу.
+ * Два синхронных видео одной локации: нижний слой — тепловизионный канал
+ * (виден справа от разделителя), верхний слой — обычная камера, обрезается
+ * слева по разделителю через clip-path. Перетаскивая разделитель, посетитель
+ * переключается между «глазами» двух приборов.
  *
- * Управление: pointer-drag по дорожке, клик по дорожке, клавиши
- * ←/→ когда слайдер в фокусе, тач-жесты на мобильных.
+ * Управление: pointer-drag по дорожке, клик по дорожке, клавиши ←/→ когда
+ * слайдер в зоне видимости, тач-жесты на мобильных.
  *
- * Изображения: /public/products/ir-before.png (яркий силуэт),
- * /public/products/ir-after.png (силуэт скрыт).
+ * Видео стартуют при появлении блока в зоне видимости (IntersectionObserver
+ * вместо autoPlay — страховка от гонки гидратации), синхронизируются по
+ * timeupdate мастера: мастер — тепловизор, дрейф камеры > 0.25с подтягивается.
+ *
+ * Медиа: /public/products/ir-camera.mp4 + ir-camera-poster.jpg (обычная
+ * камера), /public/products/ir-thermal.mp4 + ir-thermal-poster.jpg
+ * (тепловизор). Если один источник недоступен — второй показывается
+ * на весь кадр без разделителя.
  */
 export default function IrCompare() {
   const [pos, setPos] = useState(50); // 0..100 — позиция разделителя
   const wrapRef = useRef<HTMLDivElement>(null);
   const draggingRef = useRef(false);
+  const thRef = useRef<HTMLVideoElement>(null);
+  const camRef = useRef<HTMLVideoElement>(null);
+  // Отказ одного из источников → одиночный режим: второе видео на весь кадр
+  const [fail, setFail] = useState({ cam: false, th: false });
+  const single = fail.cam || fail.th;
 
   const setFromClientX = useCallback((clientX: number) => {
     const el = wrapRef.current;
@@ -53,7 +65,7 @@ export default function IrCompare() {
     }
   };
 
-  // Сброс drag при уходе указителя за пределы окна
+  // Сброс drag при уходе указателя за пределы окна
   useEffect(() => {
     const onUp = () => {
       draggingRef.current = false;
@@ -97,6 +109,63 @@ export default function IrCompare() {
     };
   }, []);
 
+  // Видео: старт/пауза по видимости + синхронный playback
+  // (мастер — тепловизор, камера подтягивается при дрейфе > 0.25с)
+  useEffect(() => {
+    const th = thRef.current;
+    const cam = camRef.current;
+    if (!th || !cam) return;
+
+    const tryPlay = (v: HTMLVideoElement) => {
+      if (v.paused) v.play().catch(() => {});
+    };
+    const sync = () => {
+      if (
+        cam.readyState >= 2 &&
+        Math.abs(cam.currentTime - th.currentTime) > 0.25
+      ) {
+        cam.currentTime = th.currentTime;
+      }
+    };
+    const onMasterTick = () => sync();
+    const onMasterPlaying = () => {
+      sync();
+      tryPlay(cam);
+    };
+
+    th.addEventListener("timeupdate", onMasterTick);
+    th.addEventListener("playing", onMasterPlaying);
+    th.addEventListener("seeked", onMasterPlaying);
+
+    const mediaObserver =
+      "IntersectionObserver" in window
+        ? new IntersectionObserver(
+            (entries) => {
+              entries.forEach((e) => {
+                if (e.isIntersecting) {
+                  tryPlay(th);
+                  tryPlay(cam);
+                } else {
+                  th.pause();
+                  cam.pause();
+                }
+              });
+            },
+            { threshold: 0.4 }
+          )
+        : null;
+    if (wrapRef.current && mediaObserver)
+      mediaObserver.observe(wrapRef.current);
+
+    return () => {
+      th.removeEventListener("timeupdate", onMasterTick);
+      th.removeEventListener("playing", onMasterPlaying);
+      th.removeEventListener("seeked", onMasterPlaying);
+      if (wrapRef.current && mediaObserver)
+        mediaObserver.unobserve(wrapRef.current);
+    };
+  }, [fail.cam, fail.th]);
+
   return (
     <section id="ir-compare" className="sn-section !pt-0">
       <header className="reveal mb-10">
@@ -105,15 +174,17 @@ export default function IrCompare() {
         </div>
         <div className="flex justify-between items-end flex-wrap gap-8">
           <h2 className="font-display text-[clamp(2rem,4vw,3.2rem)] font-bold uppercase tracking-[-1px] leading-[1.05]">
-            До / после
+            Живая сцена:
             <br />
-            в ИК-спектре
+            камера / тепловизор
           </h2>
           <p className="text-base text-[var(--text2)] max-w-[560px] leading-[1.8]">
-            Перетащите разделитель, чтобы увидеть, как костюм «Бугор»
-            подавляет тепловую сигнатуру тела. Слева — без защиты (яркий
-            силуэт на тепловизоре), справа — в экранирующем костюме (объект
-            сливается с фоном).
+            Перетащите разделитель, чтобы переключиться между тем, что видит
+            обычная камера, и тем, что видит тепловизор, — сцена снята вживую
+            с одной точки. Слева — обычная оптика: человек в маскировочном
+            костюме «Бугор» сливается с травой и кустарником. Справа —
+            тепловизионный канал: экранирующий костюм подавляет тепловую
+            сигнатуру, и силуэт не проявляется на фоне местности.
           </p>
         </div>
       </header>
@@ -126,61 +197,89 @@ export default function IrCompare() {
         onPointerUp={onPointerUp}
         onKeyDown={onKeyDown}
         tabIndex={0}
-        role="slider"
-        aria-label="Сравнение ИК-снимков до и после"
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={Math.round(pos)}
-        aria-valuetext={`${Math.round(pos)}% — виден ${pos > 50 ? "левый край (без защиты)" : "правый край (с защитой)"}`}
+        aria-label="Сравнение живой съёмки: обычная камера и тепловизор"
+        {...(single
+          ? {}
+          : {
+              role: "slider",
+              "aria-valuemin": 0,
+              "aria-valuemax": 100,
+              "aria-valuenow": Math.round(pos),
+              "aria-valuetext": `${Math.round(pos)}% — виден ${pos > 50 ? "левый край (обычная камера)" : "правый край (тепловизор)"}`,
+            })}
       >
-        {/* After (с защитой) — нижний слой, виден справа от разделителя */}
-        <img
-          src="/products/ir-after.png"
-          alt="Тепловизор: объект в ИК-костюме Бугор — силуэт скрыт, сливается с фоном"
-          draggable={false}
-          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-        />
-        {/* HUD-подпись справа */}
-        <div className="absolute top-4 right-4 z-[2] px-2.5 py-1 bg-[rgba(13,13,13,0.7)] backdrop-blur-sm border border-[var(--olive-dark)] font-mono-brand text-[0.58rem] text-[var(--olive-light)] tracking-[1.5px] uppercase pointer-events-none">
-          ✓ С защитой «Бугор»
-        </div>
-
-        {/* Before (без защиты) — верхний слой, обрезается слева по разделителю */}
-        <div
-          className="absolute inset-0 overflow-hidden pointer-events-none"
-          style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
-        >
-          <img
-            src="/products/ir-before.png"
-            alt="Тепловизор: объект без защиты — яркий тепловой силуэт чётко виден"
-            draggable={false}
-            className="absolute inset-0 w-full h-full object-cover"
+        {/* Тепловизор — нижний слой, виден справа от разделителя */}
+        {!fail.th && (
+          <video
+            ref={thRef}
+            src="/products/ir-thermal.mp4"
+            poster="/products/ir-thermal-poster.jpg"
+            muted
+            loop
+            playsInline
+            preload="auto"
+            aria-label="Тепловизор: объект в ИК-костюме Бугор — тёплый силуэт подавлен, сливается с фоном"
+            onError={() => setFail((f) => ({ ...f, th: true }))}
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
           />
-          <div className="absolute top-4 left-4 px-2.5 py-1 bg-[rgba(13,13,13,0.7)] backdrop-blur-sm border border-[#a85a3c] font-mono-brand text-[0.58rem] text-[#e8a07a] tracking-[1.5px] uppercase">
-            ✗ Без защиты
+        )}
+        {/* HUD-подпись справа */}
+        {!fail.th && (
+          <div className="absolute top-4 right-4 z-[2] px-2.5 py-1 bg-[rgba(13,13,13,0.7)] backdrop-blur-sm border border-[var(--olive-dark)] font-mono-brand text-[0.58rem] text-[var(--olive-light)] tracking-[1.5px] uppercase pointer-events-none">
+            Тепловизор
           </div>
-        </div>
+        )}
+
+        {/* Обычная камера — верхний слой, обрезается слева по разделителю */}
+        {!fail.cam && (
+          <div
+            className="absolute inset-0 overflow-hidden pointer-events-none"
+            style={
+              single ? undefined : { clipPath: `inset(0 ${100 - pos}% 0 0)` }
+            }
+          >
+            <video
+              ref={camRef}
+              src="/products/ir-camera.mp4"
+              poster="/products/ir-camera-poster.jpg"
+              muted
+              loop
+              playsInline
+              preload="auto"
+              aria-label="Обычная камера: человек в маскировочном костюме Бугор сливается с растительностью"
+              onError={() => setFail((f) => ({ ...f, cam: true }))}
+              className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            />
+            <div className="absolute top-4 left-4 px-2.5 py-1 bg-[rgba(13,13,13,0.7)] backdrop-blur-sm border border-[#a85a3c] font-mono-brand text-[0.58rem] text-[#e8a07a] tracking-[1.5px] uppercase">
+              Обычная камера
+            </div>
+          </div>
+        )}
 
         {/* Разделитель */}
-        <div
-          className="absolute top-0 bottom-0 z-[3] pointer-events-none"
-          style={{ left: `${pos}%`, transform: "translateX(-50%)" }}
-        >
-          {/* Линия */}
-          <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-0.5 bg-[var(--olive-light)] shadow-[0_0_12px_var(--olive)]" />
-          {/* Рукоятка */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-[rgba(13,13,13,0.85)] border-2 border-[var(--olive-light)] rounded-full backdrop-blur-sm">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--olive-light)]">
-              <path d="M15 18l-6-6 6-6" />
-              <path d="M9 18l6-6-6-6" />
-            </svg>
+        {!single && (
+          <div
+            className="absolute top-0 bottom-0 z-[3] pointer-events-none"
+            style={{ left: `${pos}%`, transform: "translateX(-50%)" }}
+          >
+            {/* Линия */}
+            <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-0.5 bg-[var(--olive-light)] shadow-[0_0_12px_var(--olive)]" />
+            {/* Рукоятка */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-[rgba(13,13,13,0.85)] border-2 border-[var(--olive-light)] rounded-full backdrop-blur-sm">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--olive-light)]">
+                <path d="M15 18l-6-6 6-6" />
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Подсказка снизу */}
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-[3] pointer-events-none px-3 py-1 bg-[rgba(13,13,13,0.7)] backdrop-blur-sm border border-[var(--border-brand)] font-mono-brand text-[0.55rem] text-[var(--text3)] tracking-[1.5px] uppercase whitespace-nowrap">
-          ← перетащите →
-        </div>
+        {!single && (
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-[3] pointer-events-none px-3 py-1 bg-[rgba(13,13,13,0.7)] backdrop-blur-sm border border-[var(--border-brand)] font-mono-brand text-[0.55rem] text-[var(--text3)] tracking-[1.5px] uppercase whitespace-nowrap">
+            ← перетащите →
+          </div>
+        )}
       </div>
 
       {/* Метрики под слайдером */}

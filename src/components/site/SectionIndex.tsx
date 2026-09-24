@@ -19,7 +19,7 @@ const SECTIONS: SectionDef[] = [
   { id: "burger-chooser", label: "Подбор" },
   { id: "tech", label: "Технологии" },
   { id: "compare", label: "Сравнение" },
-  { id: "ir-compare", label: "До/После ИК" },
+  { id: "ir-compare", label: "Камера/Тепловизор" },
   { id: "guarantees", label: "Гарантии" },
   { id: "size-guide", label: "Размеры" },
   { id: "faq", label: "Вопросы" },

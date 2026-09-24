@@ -103,7 +103,7 @@ export default function Footer() {
             </div>
             <ul className="list-none p-0 m-0 space-y-3">
               <li><a href="#tech" className="text-[var(--text2)] no-underline text-[0.85rem] transition-colors hover:text-[var(--olive-light)] hover:pl-1">Технологии</a></li>
-              <li><a href="#ir-compare" className="text-[var(--text2)] no-underline text-[0.85rem] transition-colors hover:text-[var(--olive-light)] hover:pl-1">До/после в ИК</a></li>
+              <li><a href="#ir-compare" className="text-[var(--text2)] no-underline text-[0.85rem] transition-colors hover:text-[var(--olive-light)] hover:pl-1">Камера / тепловизор</a></li>
               <li><a href="#compare" className="text-[var(--text2)] no-underline text-[0.85rem] transition-colors hover:text-[var(--olive-light)] hover:pl-1">Сравнение характеристик</a></li>
               <li><a href="#reviews" className="text-[var(--text2)] no-underline text-[0.85rem] transition-colors hover:text-[var(--olive-light)] hover:pl-1">Отзывы</a></li>
               <li><a href="#faq" className="text-[var(--text2)] no-underline text-[0.85rem] transition-colors hover:text-[var(--olive-light)] hover:pl-1">Вопросы и ответы</a></li>
