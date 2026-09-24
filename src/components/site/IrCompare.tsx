@@ -14,10 +14,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
  * слайдер в зоне видимости, тач-жесты на мобильных.
  *
  * Видео стартуют при появлении блока в зоне видимости (IntersectionObserver
- * вместо autoPlay — страховка от гонки гидратации), синхронизируются по
- * timeupdate мастера: мастер — тепловизор; камера подтягивается только при
- * дрейфе >= 0.6с и не чаще раза в 3с (гистерезис против рывков на медленной
- * сети — частые seek'и выглядят как тряска кадра влево-вправо).
+ * вместо autoPlay — страховка от гонки гидратации) и дальше играют независимо,
+ * БЕЗ программной синхронизации: исходники сняты без sync-метаданных, а любая
+ * программная подтяжка (seek камеры по таймеру) даёт видимые рывки кадра.
+ * Оба ролика стартуют одним колбэком и длятся ровно 12.0с — петля остаётся
+ * зрительно выровненной естественным образом.
  *
  * Медиа: /public/products/ir-camera.mp4 + ir-camera-poster.jpg (обычная
  * камера), /public/products/ir-thermal.mp4 + ir-thermal-poster.jpg
@@ -111,12 +112,10 @@ export default function IrCompare() {
     };
   }, []);
 
-  // Видео: старт/пауза по видимости + синхронный playback
-  // (мастер — тепловизор). Синхронизация — с гистерезисом: частые
-  // принудительные seek'и на медленной сети/слабом устройстве выглядят
-  // как рывки кадра влево-вправо. Камера подтягивается только при
-  // дрейфе >= 0.6с и не чаще раза в 3с; равные длительности (12.0с)
-  // держат петлю выровненной без постоянных коррекций.
+  // Видео: старт/пауза по видимости. Без программной синхронизации —
+  // исходники сняты без sync-метаданных, а программная подтяжка (seek)
+  // давала видимые рывки кадра. Оба ролика стартуют одновременно
+  // и длятся ровно 12.0с, поэтому петля держится выровненной сама.
   useEffect(() => {
     const th = thRef.current;
     const cam = camRef.current;
@@ -125,24 +124,6 @@ export default function IrCompare() {
     const tryPlay = (v: HTMLVideoElement) => {
       if (v.paused) v.play().catch(() => {});
     };
-    let lastSync = 0;
-    const sync = () => {
-      if (cam.readyState < 2 || th.readyState < 2) return;
-      if (Math.abs(cam.currentTime - th.currentTime) < 0.6) return;
-      const now = performance.now();
-      if (now - lastSync < 3000) return;
-      lastSync = now;
-      cam.currentTime = th.currentTime;
-    };
-    const onMasterTick = () => sync();
-    const onMasterPlaying = () => {
-      sync();
-      tryPlay(cam);
-    };
-
-    th.addEventListener("timeupdate", onMasterTick);
-    th.addEventListener("playing", onMasterPlaying);
-    th.addEventListener("seeked", onMasterPlaying);
 
     const mediaObserver =
       "IntersectionObserver" in window
@@ -165,9 +146,6 @@ export default function IrCompare() {
       mediaObserver.observe(wrapRef.current);
 
     return () => {
-      th.removeEventListener("timeupdate", onMasterTick);
-      th.removeEventListener("playing", onMasterPlaying);
-      th.removeEventListener("seeked", onMasterPlaying);
       if (wrapRef.current && mediaObserver)
         mediaObserver.unobserve(wrapRef.current);
     };
