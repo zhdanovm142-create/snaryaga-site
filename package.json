@@ -8,9 +8,6 @@
     "optimize:images": "bun scripts/optimize-images.mjs",
     "optimize:videos": "bun scripts/optimize-videos.mjs",
     "build": "bun run optimize:images && bun run optimize:videos && next build",
-    "verify:content": "bun scripts/verify-content.ts",
-    "verify:static": "node scripts/verify-static.mjs out && node scripts/verify-static.mjs static-build",
-    "release": "bun run build && bun run verify:content && node scripts/verify-static.mjs out && rm -rf static-build && cp -r out static-build && touch static-build/.nojekyll && node scripts/verify-static.mjs static-build",
     "start": "next start",
     "lint": "eslint ."
   },
