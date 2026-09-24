@@ -385,3 +385,36 @@ Work Log:
 Stage Summary:
 - Статик-билд подтверждён в третий раз и впервые — автоматическим повторяемым верификатором: scripts/verify-static.mjs (25/25). Агентам: перед деплоем запускать «node scripts/verify-static.mjs out»
 - Для агентов создан /home/z/my-project/download/PROJECT-OVERVIEW.md — детальный разбор проекта (архитектура, карта файлов, механики, perf, SEO, пайплайн, деплой, регламент)
+
+---
+Task ID: PR-1
+Agent: main (Super Z sandbox)
+Task: Создать пул-реквест с результатами верификации и документации (токен владельца — из git remote).
+
+Work Log:
+- Диагностика: токен владельца уже зашит в remote URL (.git/config), репо zhdanovm142-create/snaryaga-site, GitHub Pages ВЫКЛЮЧЕН (has_pages: false), живой сайт — nginx-хостинг → деплой static-build на хостинг выполняется вне GitHub
+- GitHub API: PR #22 (perf-оптимизации) уже смёржен 2026-09-24T14:41Z; origin/main содержит всю перф-работу
+- Локально 3 автокоммита с мусором (skills/ песочницы, скриншоты) — НЕ пушил как есть
+- Песочница автокоммитит в main и сбрасывает стейджинг → ветка+файлы+коммит+пуш выполнены одной атомарной командой
+- Ветка chore/verify-and-agent-docs от origin/main: только полезное (static-build/, scripts/verify-static.mjs, scripts/.video-opt-cache.json, download/PROJECT-OVERVIEW.md, worklog.md) — 1 коммит a8ca716
+- PR #23 открыт через API: https://github.com/zhdanovm142-create/snaryaga-site/pull/23
+
+Stage Summary:
+- PR #23 ждёт мержа: верификатор 25 проверок + verified static-build + PROJECT-OVERVIEW + worklog
+- После мержа: выложить static-build/ на nginx-хостинг, потом переобход Яндекс.Вебмастер + GSC
+- Токен из чата (ghp_HuIB...) — владелецу отозвать; в remote он не светится в чате
+
+---
+Task ID: CI-1
+Agent: main (Super Z sandbox)
+Task: Автопересборка static-build после каждого мержа в main (GitHub Actions).
+
+Work Log:
+- Проверена почва репо: 38 webp в public/products-opt, исходники (og png, постеры, mp4, leggings-1.jpg), bun.lock, scripts/verify-static.mjs и .video-opt-cache.json — всё трекается; out/ в .gitignore, static-build/ нет; ffmpeg предустановлен на ubuntu-latest
+- Подготовлен .github/workflows/static-build.yml: push в main + workflow_dispatch (ручной запуск); bun install --frozen-lockfile → bun run build → verify-static out/ (25 проверок) → sync static-build/ + .nojekyll → повторная верификация → коммит в main «ci: автопересборка static-build после мержа [skip ci]» (защита от цикла), также коммитится .video-opt-cache.json
+- permissions: contents: write; concurrency: static-build с cancel-in-progress; автор — github-actions[bot]
+- ПУШ WORKFLOW ЗАБЛОКИРОВАН: PAT владельца имеет только scope «repo», а для файлов .github/workflows нужен scope «workflow» (push отклонён GitHub: refusing to allow a PAT to create or update workflow). Файл передан владельцу через комментарий PR #23 — добавить через web-UI или выдать токен с repo+workflow
+- Контракт сервера: nginx отдаёт static-build/ из main → после мержа достаточно git pull
+
+Stage Summary:
+- После добавления workflow (web-UI или новый токен) и мержа PR #23 Actions сам пересобирает и коммитит свежий static-build в main; на сервере — git pull
