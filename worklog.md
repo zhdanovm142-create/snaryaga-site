@@ -418,3 +418,40 @@ Work Log:
 
 Stage Summary:
 - После добавления workflow (web-UI или новый токен) и мержа PR #23 Actions сам пересобирает и коммитит свежий static-build в main; на сервере — git pull
+
+---
+Task ID: CI-MERGE-2
+Agent: main (Super Z sandbox)
+Task: Финализация PR #23 по схеме владельца (пересборка в PR, без Actions).
+
+Work Log:
+- Подтверждён паттерн прошлых PR (#21, #22): изменения кода + пересобранный static-build в том же PR — PR #23 сделан ровно так (23 файла static-build + verifier + кэш + доки + worklog)
+- Комментарий с GitHub Actions workflow УДАЛЁН из PR #23 по решению владельца (автоматизация отложена; готовый YAML сохранён в download/static-build-workflow.yml на будущее)
+- PR #23 смёржен в main через API: merge commit d19e0066d8fe4ea5f01507094510a25035549696
+- Проверка origin/main: static-build/index.html содержит products-opt, verify-static.mjs и PROJECT-OVERVIEW.md в дереве
+- Локальный main опережает origin на автокоммиты с мусором (skills/ песочницы) — НЕ пушить; origin/main — источник истины
+
+Stage Summary:
+- main содержит свежий verified static-build (25/25) → на сервере достаточно git pull
+- Деплой-схема владельца: изменения → пересборка билда → PR → мерж → git pull на сервере
+
+---
+Task ID: CONTENT-1
+Agent: main (Super Z sandbox)
+Task: Фактчекер контента для агентов + smooth release-команда + диагноз потери фото (чехол/Фантом-50).
+
+Work Log:
+- Диагноз по скринам владельца: у «Чехла на рюкзак ИК» main+hover указывают на фотку Фантома (ryukzak-fantom-1.webp), у «Фантома-50» main===hover («одну фотку используют»). Реальных фото нет нигде: CDN z-cdn-media.chatglm.cn отдал 403 на все 6 исторических URL, в git-истории исходников chehol-* и fantom-2 нет — файлы утеряны безвозвратно (старые агенты не сохранили исходники в репо)
+- Новый scripts/verify-content.ts — фактчекер контента (запуск через bun, импортирует PRODUCTS напрямую, без парсинга текста):
+  FAIL: 404 картинок, 0 байт, hover===main без photoPending, пустые name/price/description/alt, дубликаты id, 404 в ссылках компонентов (Poncho/Suits/Categories/BurgerChooser)
+  WARN: photoPending (фото утеряны, ждём владельца), шеринг фото между товарами вне SHARING_ALLOWLIST
+  SHARING_ALLOWLIST: suit-big-1→komplekt-polno, suit-medium-1→dvustoronniy (осознанные шеринги)
+  Первый прогон поймал оба известных бага + 2 неучтённых шеринга
+- products.ts: в интерфейс Product добавлено photoPending?: boolean; фантом-50 и чехол помечены photoPending: true с честными комментами об утере
+- package.json: bun run release (гейт агента одной командой: build → verify:content → verify:static out → sync static-build → verify:static static-build)
+- PROJECT-OVERVIEW.md §10/§11: гейт release, правило «фото товаров — только в репо», снятие photoPending при получении фото
+- bun run release: 25/25 static + фактчек 0 FAIL / 3 WARN + браузерный smoke (18 секций, 0 ошибок)
+
+Stage Summary:
+- Гейт для агентов готов: bun run release до каждого PR; пушить с FAIL запрещено (регламент §11)
+- Ждём от владельца фото: чехол (2 шт: main+hover), Фантом-50 вид 2 — после загрузки в public/products-opt/ и снятия photoPending WARN погаснут

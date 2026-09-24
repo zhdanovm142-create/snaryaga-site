@@ -31,6 +31,8 @@ export interface ProductFeature {
 }
 
 export interface Product {
+  /** true: второго фото нет (CDN утерян) — ждём от владельца; фактчекер даёт WARN вместо FAIL */
+  photoPending?: boolean;
   id: string;
   /** Короткая линейка (англ. ключ), напр. "Assault Pack" / "IR Suit" */
   category: string;
@@ -156,10 +158,11 @@ export const PRODUCTS: Product[] = [
     price: "По запросу",
     images: {
       main: "/products-opt/ryukzak-fantom-1.webp",
-      // Реального «вида 2» нет (CDN-файл удалён, 403) — фолбэк на основное фото
-      hover:
-        "/products-opt/ryukzak-fantom-1.webp",
+      // Реального «вида 2» нет (CDN-файл удалён, 403; исходника в git-истории
+      // нет) — фолбэк на основное фото до получения снимков от владельца
+      hover: "/products-opt/ryukzak-fantom-1.webp",
     },
+    photoPending: true,
     alt: {
       main: "Рюкзак 50л вид 1",
       hover: "Рюкзак 50л вид 2",
@@ -492,11 +495,13 @@ export const PRODUCTS: Product[] = [
       "Чехол-накидка с ИК-экранированием для рюкзаков объёмом до 60 литров. Стягивается шнуром по периметру, фиксируется клипсами. Применяется, когда полный экранированный рюкзак недоступен — надевается поверх обычного. Складывается в собственный мешок размером с кулак. Олива или койот.",
     price: "По запросу",
     images: {
+      // ⚠ ФОТО ЧЕХЛА НЕТ ВООБЩЕ: CDN утерян (403), исходники в git не
+      // сохранялись. Временно показана фотка Фантома — фактчекер держит
+      // это в WARN, пока владелец не пришлёт реальные снимки чехла.
       main: "/products-opt/ryukzak-fantom-1.webp",
-      // Реального «вида 2» нет (CDN-файл удалён, 403) — фолбэк на основное фото
-      hover:
-        "/products-opt/ryukzak-fantom-1.webp",
+      hover: "/products-opt/ryukzak-fantom-1.webp",
     },
+    photoPending: true,
     alt: {
       main: "Чехол на рюкзак ИК, вид 1",
       hover: "Чехол на рюкзак ИК, вид 2",
