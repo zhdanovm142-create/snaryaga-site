@@ -164,7 +164,7 @@ export default function Footer() {
         {/* Юридическая строка */}
         <div className="pt-6 border-t border-[var(--border-brand)] flex justify-between items-center flex-wrap gap-4">
           <div className="text-[0.72rem] text-[var(--text3)]">
-            © 2019–{new Date().getFullYear()} СНАРЯГА36 · ИП · Воронеж · Все права защищены
+            © 2019–{new Date().getFullYear()} СНАРЯГА36 (Снаряга 36) · ИП · Воронеж · Все права защищены
           </div>
           <div className="flex gap-6 items-center">
             <a href="#" className="text-[0.72rem] text-[var(--text3)] no-underline transition-colors hover:text-[var(--text2)]">
