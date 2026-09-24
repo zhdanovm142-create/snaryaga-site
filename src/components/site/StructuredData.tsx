@@ -14,11 +14,21 @@ import { PRODUCTS } from "@/data/products";
 // Дублируем константу (не импортируем из layout.tsx — там цикл: layout импортирует StructuredData).
 const SITE_URL = "https://xn--36-6kcao2dwaf3k.xn--p1ai";
 
+// Варианты написания бренда — слитно и раздельно: по запросу «снаряга 36»
+// раздельно сайт не находился. alternateName принимает массив (schema.org).
+const BRAND_ALIASES = [
+  "СНАРЯГА 36",
+  "Снаряга 36",
+  "снаряга 36",
+  "Snaryaga36",
+  "Snaryaga 36",
+];
+
 const ORG = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Снаряга36",
-  alternateName: "СНАРЯГА 36",
+  alternateName: BRAND_ALIASES,
   url: SITE_URL,
   logo: { "@type": "ImageObject", url: `${SITE_URL}/logo.svg` },
   description:
@@ -39,6 +49,7 @@ const WEBSITE = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "Снаряга36",
+  alternateName: BRAND_ALIASES,
   url: SITE_URL,
   inLanguage: "ru-RU",
   description:
@@ -140,6 +151,10 @@ const FAQS = [
   {
     q: "Чем экранирование отличается от изоляции?",
     a: "Экранирование блокирует ИК-излучение постоянно. Изоляция лишь замедляет теплопередачу — эффект временный.",
+  },
+  {
+    q: "СНАРЯГА36 или Снаряга 36 — как правильно?",
+    a: "Правильно слитно — СНАРЯГА36: это название бренда и домена снаряга36.рф. «Снаряга 36» раздельно — тот же магазин ИК-маскировочной экипировки в Воронеже.",
   },
 ];
 

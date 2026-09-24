@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-type Topic = "tech" | "care" | "order" | "shipping";
+type Topic = "tech" | "care" | "order" | "shipping" | "brand";
 
 interface QA {
   q: string;
@@ -46,6 +46,13 @@ const FAQS: QA[] = [
     a: "Да, отправляем по всей России СДЭК и Почтой России. Самовывоз — из пункта выдачи в Воронеже, Купянский пер., 11. Стоимость доставки рассчитывается отдельно.",
     topic: "shipping",
   },
+  {
+    // Оба написания бренда в видимом тексте: по запросу «снаряга 36»
+    // раздельно сайт не находился (см. также alternateName в StructuredData).
+    q: "СНАРЯГА36 или Снаряга 36 — как правильно?",
+    a: "Правильно — слитно: СНАРЯГА36. Так звучит название бренда и домена сайта — снаряга36.рф. Пишут и раздельно — «Снаряга 36»: это тот же магазин ИК-маскировочной экипировки в Воронеже. Как ни напиши в поиске — вы по адресу.",
+    topic: "brand",
+  },
 ];
 
 const TOPIC_LABELS: { id: Topic | "all"; label: string }[] = [
@@ -54,6 +61,7 @@ const TOPIC_LABELS: { id: Topic | "all"; label: string }[] = [
   { id: "care", label: "Уход" },
   { id: "order", label: "Заказ" },
   { id: "shipping", label: "Доставка" },
+  { id: "brand", label: "Бренд" },
 ];
 
 function FaqItem({
