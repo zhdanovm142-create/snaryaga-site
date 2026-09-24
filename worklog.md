@@ -348,3 +348,73 @@ Stage Summary:
 - Все 5 пунктов плана внедрены и проверены в браузере (dev + статика).
 - Первоначальная загрузка: 0 видео при открытии (было 3 autoplay ≈ 17 МБ), продуктовые фото −27% веса, Poncho грузит 1 фото вместо 5, серверные секции выпали из JS-бандла, нижние секции — ленивые чанки.
 - Артефакт деплоя static-build/ 32 → 26 МБ. SEO-набор (title/canonical/OG/JSON-LD/sitemap/верификации) не тронут и подтверждён в новой сборке.
+
+---
+Task ID: PERF-MEASURE-3
+Agent: main (Super Z sandbox)
+Task: Замер скорости/размера новой сборки + ответ про переиндексацию (Яндекс.Вебмастер / Google).
+
+Work Log:
+- agent-browser на python http.server :8766 (out/): первичная загрузка 22 запроса; HTML 422 КБ raw / 59 КБ gzip, CSS 178/26 КБ, JS 709/198 КБ (7 чанков), шрифты 174 КБ (7 woff2), DCL 347 мс, Load 545 мс (localhost)
+- hero.mp4 (2.2 МБ) стартует только после idle (~1.8 с) — в критический путь не входит, подтверждено
+- Полный скролл страницы: 54 запроса, 14.7 МБ (видео ≈ 13.6 МБ: hero 2.2 + tech-ir 6.9 + 2 ИК-ролика ~4.5)
+- Нюанс: постеры ir-camera-poster.jpg (183 КБ) + ir-thermal-poster.jpg (37 КБ) грузятся сразу — dynamic() в Next 16 пререндерит HTML <video poster>, Chrome тянет постер при парсинге. Косметика, можно поленить позже
+- Живой сайт проверен curl: live HTML 320 КБ, маркеры products-opt=0, preload="none"=0, hero.mp4 инлайном=1 → НА ПРОДАЕ СТАРАЯ SEO-СБОРКА БЕЗ PERF-1. Sitemap.xml на проде есть (lastmod 13:54Z), robots.txt с Sitemap-директивой есть, верификации не слетят (мета google+yandex подтверждены в out/)
+
+Stage Summary:
+- Новая сборка готова и измерена: старт ~460 КБ gzip критических ресурсов; деплоить static-build/ (равен out/), на проде пока старая версия
+- Переиндексация: после деплоя — GSC «Проверка URL → Запросить индексирование» + Яндекс.Вебмастер «Переобход страниц»; GA переиндексацию не делает вообще
+
+---
+Task ID: VERIFY-4
+Agent: main (Super Z sandbox)
+Task: Повторная полная перепроверка статик-билда + ворклог для агентов + детальный разбор проекта.
+
+Work Log:
+- bun run build повторно: Turbopack OK, 4 статических роута (/, /_not-found, /sitemap.xml), оптимизаторы отработали идемпотентно ([optimize-videos] «Изменений нет»)
+- Новый постоянный артефакт: scripts/verify-static.mjs — комплексный верификатор статики (25 проверок, 3 блока):
+    A (SEO, 19): title/description/canonical/og:title/og:url/og:image(растровый ir-after.png)/twitter:card/JSON-LD Organization+Product+FAQPage/google+yandex verification/нет noindex/H1/объём пререндера (144 387 симв. текста)/robots.txt с Sitemap/sitemap.xml валидный с lastmod/yandex-файл/favicon.ico+favicon.svg
+    B (целостность, 2): каждый URL из index.html (56 ссылок: src/href/poster/content) существует на диске; все ассеты, на которые ссылаются JS-чанки (34 ссылки /products-opt|/products), существуют — защита от регрессии типа leggings-404
+    C (perf-маркеры, 4): hero.mp4 отсутствует в HTML (idle-монтаж), preload="none" у ИК-видео, пути /products-opt/ используются, verification-мета ×2
+- Итог: 25/25 PASS на out/ И на static-build/ (проверка прогнана по обоим каталогам). Правка A13: H1 в DOM «Невидимость<br/><span>в ИК-спектре</span>», uppercase даёт CSS — регэксп приведён к реальной разметке
+- Размеры: out/ = 24.9 МБ (html 0.5 МБ, js 0.8 МБ, css 173 КБ, картинки 8.9 МБ, видео 13.7 МБ, шрифты 369 КБ); index.html 378 КБ raw → 58 КБ gzip
+- static-build/ пересобран из out/ + .nojekyll ( rm -rf && cp -r )
+- Браузерный smoke (agent-browser, python :8766 → out/): title/H1/18 секций/49 img (48 webp из products-opt)/1 блок JSON-LD/lang=ru; клик «Добавить Рюкзак „Тень-20“ в корзину» → localStorage sn36-cart записан; iPhone (390px): 18 секций, горизонтального скролла нет; page errors — пусто
+- Живой сайт (снаряга36.рф): по-прежнему старая SEO-сборка (products-opt=0, hero.mp4 инлайном) — static-build/ ждёт деплоя (см. Task ID PERF-MEASURE-3)
+
+Stage Summary:
+- Статик-билд подтверждён в третий раз и впервые — автоматическим повторяемым верификатором: scripts/verify-static.mjs (25/25). Агентам: перед деплоем запускать «node scripts/verify-static.mjs out»
+- Для агентов создан /home/z/my-project/download/PROJECT-OVERVIEW.md — детальный разбор проекта (архитектура, карта файлов, механики, perf, SEO, пайплайн, деплой, регламент)
+
+---
+Task ID: PR-1
+Agent: main (Super Z sandbox)
+Task: Создать пул-реквест с результатами верификации и документации (токен владельца — из git remote).
+
+Work Log:
+- Диагностика: токен владельца уже зашит в remote URL (.git/config), репо zhdanovm142-create/snaryaga-site, GitHub Pages ВЫКЛЮЧЕН (has_pages: false), живой сайт — nginx-хостинг → деплой static-build на хостинг выполняется вне GitHub
+- GitHub API: PR #22 (perf-оптимизации) уже смёржен 2026-09-24T14:41Z; origin/main содержит всю перф-работу
+- Локально 3 автокоммита с мусором (skills/ песочницы, скриншоты) — НЕ пушил как есть
+- Песочница автокоммитит в main и сбрасывает стейджинг → ветка+файлы+коммит+пуш выполнены одной атомарной командой
+- Ветка chore/verify-and-agent-docs от origin/main: только полезное (static-build/, scripts/verify-static.mjs, scripts/.video-opt-cache.json, download/PROJECT-OVERVIEW.md, worklog.md) — 1 коммит a8ca716
+- PR #23 открыт через API: https://github.com/zhdanovm142-create/snaryaga-site/pull/23
+
+Stage Summary:
+- PR #23 ждёт мержа: верификатор 25 проверок + verified static-build + PROJECT-OVERVIEW + worklog
+- После мержа: выложить static-build/ на nginx-хостинг, потом переобход Яндекс.Вебмастер + GSC
+- Токен из чата (ghp_HuIB...) — владелецу отозвать; в remote он не светится в чате
+
+---
+Task ID: CI-1
+Agent: main (Super Z sandbox)
+Task: Автопересборка static-build после каждого мержа в main (GitHub Actions).
+
+Work Log:
+- Проверена почва репо: 38 webp в public/products-opt, исходники (og png, постеры, mp4, leggings-1.jpg), bun.lock, scripts/verify-static.mjs и .video-opt-cache.json — всё трекается; out/ в .gitignore, static-build/ нет; ffmpeg предустановлен на ubuntu-latest
+- Подготовлен .github/workflows/static-build.yml: push в main + workflow_dispatch (ручной запуск); bun install --frozen-lockfile → bun run build → verify-static out/ (25 проверок) → sync static-build/ + .nojekyll → повторная верификация → коммит в main «ci: автопересборка static-build после мержа [skip ci]» (защита от цикла), также коммитится .video-opt-cache.json
+- permissions: contents: write; concurrency: static-build с cancel-in-progress; автор — github-actions[bot]
+- ПУШ WORKFLOW ЗАБЛОКИРОВАН: PAT владельца имеет только scope «repo», а для файлов .github/workflows нужен scope «workflow» (push отклонён GitHub: refusing to allow a PAT to create or update workflow). Файл передан владельцу через комментарий PR #23 — добавить через web-UI или выдать токен с repo+workflow
+- Контракт сервера: nginx отдаёт static-build/ из main → после мержа достаточно git pull
+
+Stage Summary:
+- После добавления workflow (web-UI или новый токен) и мержа PR #23 Actions сам пересобирает и коммитит свежий static-build в main; на сервере — git pull
