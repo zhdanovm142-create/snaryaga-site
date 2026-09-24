@@ -69,9 +69,12 @@ export const metadata: Metadata = {
   icons: {
     // favicon.ico в корне обязателен: робот Яндекса ищет иконку именно по
     // адресу /favicon.ico — без него иконки в выдаче Яндекса не будет.
+    // SVG-фавиконка (/favicon.svg) — Яндекс предпочитает SVG и берёт её
+    // в первую очередь: раньше тут был logo.svg с тёмным «Z» из шаблона,
+    // из-за него Яндекс показывал иконку не того дизайна.
     icon: [
       { url: "/favicon.ico", sizes: "48x48" },
-      { url: "/logo.svg", type: "image/svg+xml" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
       { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
     ],
     apple: "/apple-touch-icon.png",
