@@ -1,10 +1,7 @@
 "use client";
 
 import { useState } from "react";
-
-interface Props {
-  onSubmitted: (message: string) => void;
-}
+import { useSiteActions } from "@/components/site/SiteContext";
 
 const BENEFITS = [
   { icon: "🔔", text: "Уведомления о новых тестах и моделях" },
@@ -13,7 +10,9 @@ const BENEFITS = [
   { icon: "✅", text: "Только полезные материалы" },
 ];
 
-export default function Newsletter({ onSubmitted }: Props) {
+export default function Newsletter() {
+  // Тост успеха — из SiteActionsContext (page.tsx — серверный компонент).
+  const { showToast: onSubmitted } = useSiteActions();
   const [email, setEmail] = useState("");
   const [touched, setTouched] = useState(false);
   const [submitting, setSubmitting] = useState(false);

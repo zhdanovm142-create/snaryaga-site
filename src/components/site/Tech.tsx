@@ -1,3 +1,5 @@
+import LazyVideo from "@/components/site/LazyVideo";
+
 const STEPS = [
   {
     num: "01",
@@ -42,19 +44,17 @@ export default function Tech() {
               hue-rotate/sepia глушили контраст термограммы). Фолбэк по
               архитектуре hero: пока видео грузится — постер; если не
               загрузилось — видео-слой прозрачен и остаётся радар на фоне
-              сетки, деградации нет. */}
-          <video
-            className="absolute inset-0 w-full h-full object-cover"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
+              сетки, деградации нет.
+
+              Ленивая загрузка: <video> монтируется только при приближении
+              блока к вьюпорту (LazyVideo, фасад 300px) — 7-мегабайтный ролик
+              не качается при открытии страницы, пока посетитель не доскроллил. */}
+          <LazyVideo
+            className="absolute inset-0"
+            src="/tech-ir.mp4"
             poster="/tech-ir-poster.jpg"
-            aria-label="Пример тепловизионной съёмки: человек на дороге в ИК-диапазоне"
-          >
-            <source src="/tech-ir.mp4" type="video/mp4" />
-          </video>
+            ariaLabel="Пример тепловизионной съёмки: человек на дороге в ИК-диапазоне"
+          />
           {/* Лёгкая виньетка (верх/низ темнее, центр почти прозрачный):
               тонкая, чтобы не подмешивать серый в чёрный и не гасить
               контраст white-hot-кадра; только скругляет углы под тему сайта */}

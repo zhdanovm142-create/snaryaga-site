@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { PRODUCTS, type Product } from "@/data/products";
+import { useSiteActions } from "@/components/site/SiteContext";
 
 const STORAGE_KEY = "sn36-recently-viewed";
 const MAX_ITEMS = 4;
@@ -63,10 +64,6 @@ function writeRecent(ids: string[]) {
   listeners.forEach((l) => l());
 }
 
-interface Props {
-  onQuickView: (product: Product) => void;
-}
-
 /**
  * Блок «Вы недавно смотрели» — показывает до 4 последних просмотренных товаров.
  * Записывает в localStorage id товаров при открытии ProductDetailModal.
@@ -80,7 +77,9 @@ const noopSubscribe = () => () => {};
 const getMountedClient = () => true;
 const getMountedServer = () => false;
 
-export default function RecentlyViewed({ onQuickView }: Props) {
+export default function RecentlyViewed() {
+  // Колбэк из SiteActionsContext вместо пропса (page.tsx — серверный).
+  const { openDetail: onQuickView } = useSiteActions();
   const ids = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const mounted = useSyncExternalStore(noopSubscribe, getMountedClient, getMountedServer);
   const hydrated = mounted;

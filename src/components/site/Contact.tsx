@@ -2,9 +2,7 @@
 
 import { useState } from "react";
 
-interface Props {
-  onSubmitted: (message: string) => void;
-}
+import { useSiteActions } from "@/components/site/SiteContext";
 
 const PRODUCT_OPTIONS = [
   "Рюкзак 20 литров",
@@ -43,7 +41,9 @@ function validatePhone(input: string): boolean {
   return digits.length === 11;
 }
 
-export default function Contact({ onSubmitted }: Props) {
+export default function Contact() {
+  // Тост успеха — из SiteActionsContext (page.tsx — серверный компонент).
+  const { showToast: onSubmitted } = useSiteActions();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [product, setProduct] = useState(PRODUCT_OPTIONS[0]);

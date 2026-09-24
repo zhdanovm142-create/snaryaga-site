@@ -1,43 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import CamoSwatch, { type CamoType } from "@/components/site/CamoSwatch";
 
-type Cam = "moh" | "pixel" | "multicam" | "green" | "blue";
+type Cam = Extract<
+  CamoType,
+  "moh" | "pixel" | "multicam" | "green" | "blue"
+>;
 
 const SWATCHES: { id: Cam; label: string; season: string; desc: string; img: string }[] = [
-  { id: "moh", label: "Мох", season: "лето/осень", desc: "Лес, трава, листва", img: "/products/cover-1.jpg" },
-  { id: "pixel", label: "Пиксель", season: "универсал", desc: "Цифровой паттерн, город", img: "/products/cover-2.jpg" },
-  { id: "multicam", label: "Мультикам", season: "универсал", desc: "Смешанный рельеф", img: "/products/cover-3.jpg" },
-  { id: "green", label: "Зелёный", season: "лето", desc: "Сплошная растительность", img: "/products/cover-4.jpg" },
-  { id: "blue", label: "Синий", season: "город/ночь", desc: "Тёмные операции", img: "/products/cover-5.jpg" },
+  { id: "moh", label: "Мох", season: "лето/осень", desc: "Лес, трава, листва", img: "/products-opt/cover-1.webp" },
+  { id: "pixel", label: "Пиксель", season: "универсал", desc: "Цифровой паттерн, город", img: "/products-opt/cover-2.webp" },
+  { id: "multicam", label: "Мультикам", season: "универсал", desc: "Смешанный рельеф", img: "/products-opt/cover-3.webp" },
+  { id: "green", label: "Зелёный", season: "лето", desc: "Сплошная растительность", img: "/products-opt/cover-4.webp" },
+  { id: "blue", label: "Синий", season: "город/ночь", desc: "Тёмные операции", img: "/products-opt/cover-5.webp" },
 ];
-
-const SWATCH_ICON_BG: Record<Cam, string> = {
-  moh: "#5c6b3c",
-  pixel:
-    "repeating-conic-gradient(#3d4728 0% 25%,#5c6b3c 0% 50%) 0/6px 6px",
-  multicam: "#8b7355",
-  green: "#3d4728",
-  blue: "#2a3a55",
-};
 
 const MATERIALS = ["Оксфорд", "Спанбонд", "Спектра"];
 
 /** Галерея реальных фото накидок (все 8 кадров из архива). */
 const GALLERY = [
-  { img: "/products/cover-1.jpg", label: "Мох — фронт" },
-  { img: "/products/cover-2.jpg", label: "Пиксель — фронт" },
-  { img: "/products/cover-3.jpg", label: "Мультикам — фронт" },
-  { img: "/products/cover-4.jpg", label: "Зелёный — фронт" },
-  { img: "/products/cover-5.jpg", label: "Синий — фронт" },
-  { img: "/products/cover-6.jpg", label: "Оборот — деталь" },
-  { img: "/products/cover-7.jpg", label: "Капюшон — крупно" },
-  { img: "/products/cover-8.jpg", label: "Сложенный вид" },
+  { img: "/products-opt/cover-1.webp", label: "Мох — фронт" },
+  { img: "/products-opt/cover-2.webp", label: "Пиксель — фронт" },
+  { img: "/products-opt/cover-3.webp", label: "Мультикам — фронт" },
+  { img: "/products-opt/cover-4.webp", label: "Зелёный — фронт" },
+  { img: "/products-opt/cover-5.webp", label: "Синий — фронт" },
+  { img: "/products-opt/cover-6.webp", label: "Оборот — деталь" },
+  { img: "/products-opt/cover-7.webp", label: "Капюшон — крупно" },
+  { img: "/products-opt/cover-8.webp", label: "Сложенный вид" },
 ];
 
 export default function Poncho() {
   const [cam, setCam] = useState<Cam>("moh");
   const [lightbox, setLightbox] = useState<string | null>(null);
+
+  // Лайтбокс закрывается по Escape — как модалки деталей/заказа.
+  // Раньше закрыть его можно было только кликом по крестику/фону,
+  // из-за чего открытый лайтбокс «невидимо» блокировал страницу для
+  // клавиатурного пользователя.
+  useEffect(() => {
+    if (!lightbox) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightbox(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lightbox]);
 
   const current = SWATCHES.find((s) => s.id === cam)!;
 
@@ -75,19 +83,17 @@ export default function Poncho() {
             {current.season}
           </span>
 
-          {/* Реальные фото — кросс-фейд между расцветками.
-              object-contain + bg-[var(--bg3)] — вертикальные/горизонтальные
-              фото сохраняют ориентацию, заливка по краям (letterbox). */}
-          {SWATCHES.map((s) => (
-            <img
-              key={s.id}
-              src={s.img}
-              alt={`Накидка «${s.label}» — ${s.desc}`}
-              loading="lazy"
-              className="absolute inset-0 w-full h-full object-contain transition-opacity duration-500"
-              style={{ opacity: cam === s.id ? 1 : 0 }}
-            />
-          ))}
+          {/* Реальные фото — рендерится только АКТИВНАЯ расцветка (одна
+              картинка вместо пяти, стопкой грузившихся при появлении секции).
+              Смена расцветки: remount кадра с fade-in — прежний кросс-фейд
+              пяти слоёв не стоит 4 лишних загрузки. */}
+          <img
+            key={current.id}
+            src={current.img}
+            alt={`Накидка «${current.label}» — ${current.desc}`}
+            loading="lazy"
+            className="absolute inset-0 w-full h-full object-contain animate-in fade-in duration-500"
+          />
 
           {/* Сетка-оверлей для тактильного вида */}
           <div
@@ -171,10 +177,7 @@ export default function Poncho() {
                     : "border-[var(--border-brand)] text-[var(--text2)] hover:border-[var(--olive-dark)]"
                 }`}
               >
-                <i
-                  className="w-3.5 h-3.5 rounded-[2px] inline-block"
-                  style={{ background: SWATCH_ICON_BG[s.id] }}
-                />
+                <CamoSwatch type={s.id} className="w-3.5 h-3.5 rounded-[2px] inline-block" />
                 {s.label}
               </button>
             ))}

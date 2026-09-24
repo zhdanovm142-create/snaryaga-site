@@ -15,6 +15,22 @@ export default function Hero() {
   // под видео всегда лежит постер, чёрной дыры не будет ни в каком сценарии.
   const [videoOn, setVideoOn] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  // Фасад: сам <video> монтируется только после «простоя» браузера —
+  // LCP-элементом остаётся лёгкий постер, а hero.mp4 (2 МБ) не конкурирует
+  // с критическим путём загрузки (шрифты, CSS, JS-гидрация).
+  const [videoMounted, setVideoMounted] = useState(false);
+
+  // Отложенный монтиинг: requestIdleCallback (fallback setTimeout) — как только
+  // браузер свободен от первичной отрисовки/гидрации, начинаем грузить видео.
+  useEffect(() => {
+    const start = () => setVideoMounted(true);
+    if ("requestIdleCallback" in window) {
+      const id = window.requestIdleCallback(start, { timeout: 2500 });
+      return () => window.cancelIdleCallback(id);
+    }
+    const t = window.setTimeout(start, 1800);
+    return () => window.clearTimeout(t);
+  }, []);
 
   // Синхронизация после гидратации: автоплей в статическом HTML может
   // стартовать ДО того, как React повесит обработчик onPlaying (видео в кэше,
@@ -23,6 +39,9 @@ export default function Hero() {
   // Если видео уже играет на момент монтирования — проявляем его сразу.
   useEffect(() => {
     const v = videoRef.current;
+    // setState в effect — разовая реакция на уже играющее видео при монтировании
+    // (см. комментарий выше); правило о каскадных рендерах не применимо.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (v && !v.paused && v.readyState >= 2) setVideoOn(true);
   }, []);
 
@@ -73,20 +92,24 @@ export default function Hero() {
           style={{ backgroundImage: "url(/hero-poster.svg)" }}
           aria-hidden="true"
         />
-        <video
-          ref={videoRef}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
-            videoOn ? "opacity-100" : "opacity-0"
-          }`}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          onPlaying={() => setVideoOn(true)}
-        >
-          <source src="/hero.mp4" type="video/mp4" />
-        </video>
+        {/* Видео монтируется после простоя браузера (фасад) и проявляется
+            по событию «playing» — если файл недоступен, остаётся постер. */}
+        {videoMounted && (
+          <video
+            ref={videoRef}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
+              videoOn ? "opacity-100" : "opacity-0"
+            }`}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            onPlaying={() => setVideoOn(true)}
+          >
+            <source src="/hero.mp4" type="video/mp4" />
+          </video>
+        )}
       </div>
 
       {/* Scanlines (parallax: medium) */}

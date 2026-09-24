@@ -2,11 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { PRODUCTS, type Product } from "@/data/products";
-
-interface Props {
-  onOrder?: (name: string) => void;
-  onQuickView?: (p: Product) => void;
-}
+import { useSiteActions } from "@/components/site/SiteContext";
 
 /**
  * Секция «Костюмы» — витрина линейки «Бугор».
@@ -18,7 +14,9 @@ interface Props {
  * Заменяет прежние градиентные заглушки — теперь показываем реальные
  * изображения костюмов из /public/products/.
  */
-export default function Suits({ onOrder, onQuickView }: Props) {
+export default function Suits() {
+  // Колбэки из SiteActionsContext вместо пропсов (page.tsx — серверный).
+  const { openOrder: onOrder, openDetail: onQuickView } = useSiteActions();
   const [lightbox, setLightbox] = useState<Product | null>(null);
 
   // Костюмы: IR Suit + Reversible Suit, в порядке каталога.
