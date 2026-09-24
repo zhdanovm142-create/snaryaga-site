@@ -15,7 +15,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
  *
  * Видео стартуют при появлении блока в зоне видимости (IntersectionObserver
  * вместо autoPlay — страховка от гонки гидратации), синхронизируются по
- * timeupdate мастера: мастер — тепловизор, дрейф камеры > 0.25с подтягивается.
+ * timeupdate мастера: мастер — тепловизор; камера подтягивается только при
+ * дрейфе >= 0.6с и не чаще раза в 3с (гистерезис против рывков на медленной
+ * сети — частые seek'и выглядят как тряска кадра влево-вправо).
  *
  * Медиа: /public/products/ir-camera.mp4 + ir-camera-poster.jpg (обычная
  * камера), /public/products/ir-thermal.mp4 + ir-thermal-poster.jpg
@@ -110,7 +112,11 @@ export default function IrCompare() {
   }, []);
 
   // Видео: старт/пауза по видимости + синхронный playback
-  // (мастер — тепловизор, камера подтягивается при дрейфе > 0.25с)
+  // (мастер — тепловизор). Синхронизация — с гистерезисом: частые
+  // принудительные seek'и на медленной сети/слабом устройстве выглядят
+  // как рывки кадра влево-вправо. Камера подтягивается только при
+  // дрейфе >= 0.6с и не чаще раза в 3с; равные длительности (12.0с)
+  // держат петлю выровненной без постоянных коррекций.
   useEffect(() => {
     const th = thRef.current;
     const cam = camRef.current;
@@ -119,13 +125,14 @@ export default function IrCompare() {
     const tryPlay = (v: HTMLVideoElement) => {
       if (v.paused) v.play().catch(() => {});
     };
+    let lastSync = 0;
     const sync = () => {
-      if (
-        cam.readyState >= 2 &&
-        Math.abs(cam.currentTime - th.currentTime) > 0.25
-      ) {
-        cam.currentTime = th.currentTime;
-      }
+      if (cam.readyState < 2 || th.readyState < 2) return;
+      if (Math.abs(cam.currentTime - th.currentTime) < 0.6) return;
+      const now = performance.now();
+      if (now - lastSync < 3000) return;
+      lastSync = now;
+      cam.currentTime = th.currentTime;
     };
     const onMasterTick = () => sync();
     const onMasterPlaying = () => {
