@@ -91,7 +91,6 @@ export default function Footer() {
               <li><a href="#suits" className="text-[var(--text2)] no-underline text-[0.85rem] transition-colors hover:text-[var(--olive-light)] hover:pl-1">Костюмы «Бугор»</a></li>
               <li><a href="#burger-chooser" className="text-[var(--text2)] no-underline text-[0.85rem] transition-colors hover:text-[var(--olive-light)] hover:pl-1">Подбор костюма</a></li>
               <li><a href="#poncho" className="text-[var(--text2)] no-underline text-[0.85rem] transition-colors hover:text-[var(--olive-light)] hover:pl-1">Накидки</a></li>
-              <li><a href="#size-guide" className="text-[var(--text2)] no-underline text-[0.85rem] transition-colors hover:text-[var(--olive-light)] hover:pl-1">Размерная сетка</a></li>
               <li><a href="#contact" className="text-[var(--text2)] no-underline text-[0.85rem] transition-colors hover:text-[var(--olive-light)] hover:pl-1">Индивидуальный пошив</a></li>
             </ul>
           </div>
@@ -108,6 +107,9 @@ export default function Footer() {
               <li><a href="#reviews" className="text-[var(--text2)] no-underline text-[0.85rem] transition-colors hover:text-[var(--olive-light)] hover:pl-1">Отзывы</a></li>
               <li><a href="#faq" className="text-[var(--text2)] no-underline text-[0.85rem] transition-colors hover:text-[var(--olive-light)] hover:pl-1">Вопросы и ответы</a></li>
               <li><a href="#about" className="text-[var(--text2)] no-underline text-[0.85rem] transition-colors hover:text-[var(--olive-light)] hover:pl-1">О компании</a></li>
+              {/* Отдельная страница контактов (не якорь): перелинковка даёт
+                  роботам путь обхода /contact/ без sitemap */}
+              <li><a href="/contact/" className="text-[var(--text2)] no-underline text-[0.85rem] transition-colors hover:text-[var(--olive-light)] hover:pl-1">Контакты (страница)</a></li>
             </ul>
           </div>
 

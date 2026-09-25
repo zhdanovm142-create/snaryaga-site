@@ -98,8 +98,25 @@ export default function Newsletter() {
                 ))}
               </ul>
 
-              {/* Frequency badge */}
+              {/* Social proof + frequency */}
               <div className="flex items-center gap-4 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <div className="flex -space-x-2">
+                    {["#5c6b3c", "#8b7355", "#3d4728", "#6b6040"].map((c) => (
+                      <span
+                        key={c}
+                        className="w-7 h-7 rounded-full border-2 border-[var(--bg3)] flex items-center justify-center font-mono-brand text-[0.55rem] font-bold text-white"
+                        style={{ backgroundColor: c }}
+                        aria-hidden="true"
+                      >
+                        ●
+                      </span>
+                    ))}
+                  </div>
+                  <span className="text-[0.75rem] text-[var(--text3)]">
+                    <span className="text-[var(--olive-light)] font-bold">5000+</span> подписчиков
+                  </span>
+                </div>
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[rgba(92,107,60,0.12)] border border-[var(--olive-dark)] font-mono-brand text-[0.55rem] text-[var(--olive-light)] tracking-[1px] uppercase">
                   <span className="relative flex h-1.5 w-1.5" aria-hidden="true">
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--olive)] opacity-60" />

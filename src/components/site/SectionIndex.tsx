@@ -21,7 +21,6 @@ const SECTIONS: SectionDef[] = [
   { id: "compare", label: "Сравнение" },
   { id: "ir-compare", label: "Камера/Тепловизор" },
   { id: "guarantees", label: "Гарантии" },
-  { id: "size-guide", label: "Размеры" },
   { id: "faq", label: "Вопросы" },
   { id: "about", label: "О компании" },
   { id: "reviews", label: "Видео-отзывы" },

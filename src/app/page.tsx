@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import SiteChrome from "@/components/site/SiteChrome";
+import StructuredData from "@/components/site/StructuredData";
 import Hero from "@/components/site/Hero";
 import Marquee from "@/components/site/Marquee";
 import Categories from "@/components/site/Categories";
@@ -8,7 +9,6 @@ import Tech from "@/components/site/Tech";
 import Compare from "@/components/site/Compare";
 import CompareTable from "@/components/site/CompareTable";
 import Guarantees from "@/components/site/Guarantees";
-import SizeGuide from "@/components/site/SizeGuide";
 import About from "@/components/site/About";
 import Charity from "@/components/site/Charity";
 import Footer from "@/components/site/Footer";
@@ -80,7 +80,12 @@ const Contact = dynamic(() => import("@/components/site/Contact"), {
  */
 export default function Home() {
   return (
-    <SiteChrome>
+    <>
+      {/* JSON-LD главной страницы: Organization + WebSite + Product[] + FAQPage.
+          Рендерится именно здесь (а не в layout): FAQPage/Product описывают
+          контент ЭТОЙ страницы. У /contact — своя ContactPage-разметка. */}
+      <StructuredData />
+      <SiteChrome>
       <main className="flex-1">
         <Hero />
         <Marquee />
@@ -99,7 +104,6 @@ export default function Home() {
         <SectionDivider variant="diamond" />
         <Guarantees />
         <SectionDivider variant="tag" label="Вопросы" color="olive" />
-        <SizeGuide />
         <Faq />
         <About />
         <Charity />
@@ -109,6 +113,7 @@ export default function Home() {
         <Contact />
       </main>
       <Footer />
-    </SiteChrome>
+      </SiteChrome>
+    </>
   );
 }

@@ -418,3 +418,43 @@ Work Log:
 
 Stage Summary:
 - После добавления workflow (web-UI или новый токен) и мержа PR #23 Actions сам пересобирает и коммитит свежий static-build в main; на сервере — git pull
+
+---
+Task ID: ARCH-1
+Agent: main (Super Z sandbox)
+Task: Удалить из публичной версии 4 блока (счётчик подписчиков, карточка «Прозрачность», кубик «0 уходит на сторону», секция #size-guide), заархивировать их в legacy/blocks с документацией, пересобрать static-build.
+
+Work Log:
+- Ветка chore/archive-ui-blocks от main (2c1f8ce); правки только в исходниках src/, не в dist
+- Newsletter.tsx: удалены аватары-кружки и «5000+ подписчиков»; бейдж «1 письмо / месяц», форма и преимущества сохранены
+- Charity.tsx: удалена карточка «Прозрачность» (💬) из CHARITY_FEATS; «Сообщество» растянута на её место через sm:col-span-2 (последний элемент map); удалён кубик «0 / уходит на сторону» из IMPACT_STATS; сетка статистики grid-cols-3 → grid-cols-2
+- SizeGuide.tsx + SizeCalculator.tsx удалены из src (заархивированы); сняты все 4 вхождения #size-guide: page.tsx (import + <SizeGuide/>), Footer.tsx (пункт «Размерная сетка»), SectionIndex.tsx (nav «Размеры»), ProductDetailModal.tsx (ссылка «Таблица размеров →»)
+- legacy/blocks/{newsletter-subscriber-count,charity-transparency-card,charity-stat-zero-away,size-guide-section}/: original-component.tsx из git show HEAD, notes.md по шаблону (статус/дата/причина/место/зависимости/инструкция возврата), size-table-data.json для размерной сетки; legacy/README.md дополнен индексной таблицей
+- bun run lint: 0 errors (2 старых warning в verify-static.mjs); bun run build: OK; node scripts/verify-static.mjs out → 25 PASS, 0 FAIL
+- Проверки dist: «подписчиков», «Прозрачность» (карточка), «уходит на сторону», «size-guide», «Размерная сетка», «Калькулятор размера», «Подбор размера», «Таблица размеров» — отсутствуют; единственный «5000+» в сборке — легитимный «5000+ изделий выпущено» (About/TrustCertificates); find out static-build -iname "*legacy*" — пусто
+- static-build/ пересобран: rm -rf static-build && cp -r out static-build && touch .nojekyll; verify-static static-build → 25 PASS
+- Agent Browser smoke (localhost, desktop 1440 + mobile 375): секций #size-guide нет, ссылок #size-guide 0, битых якорей нет, консоль чистая; charity: 3 карточки, «Сообщество» gridColumnEnd=span 2, 2 кубика по 158px в ряд; рассылка: форма+бейдж на месте, соцдоказательства нет
+
+Stage Summary:
+- Публичная версия без 4 архивированных блоков, вся документация возврата в legacy/blocks, static-build пересобран и проверен (25/25); деплой после мержа в main — git pull на сервере
+
+---
+Task ID: SEO-1 (webDevReview раунд 4)
+Agent: main (Super Z sandbox)
+Task: SEO-раунд по запросу владельца — обновление sitemap.xml для индексации в Яндекс.Вебмастер/GSC, сниппеты по вариантам бренда, white-hat чеклист.
+
+Work Log:
+- Диагностика LIVE (curl, 2026-09-25): sitemap/robots/canonical/og уже корректны (punycode), body пререндерен, JSON-LD есть; НО: /contact → 404, www.домен → 200 вместо 301 (дубль главной), в Organization email: undefined, sameAs без Telegram
+- StructuredData.tsx: email → info@снаряга36.рф (совпадает с футером), contactPoint (sales, ru/en, RU), sameAs + t.me/snaryaga36, BRAND_ALIASES + 4 дефисных варианта; перенесён из layout.tsx в page.tsx (FAQPage только на странице с видимым FAQ — правило Google)
+- НОВАЯ СТРАНИЦА src/app/contact/page.tsx (/contact/): серверный компонент, 0 клиентского JS; свой title/description/canonical/og; JSON-LD ContactPage + BreadcrumbList; каналы tel/TG/WA/VK/mailto + адрес + график; CTA → /#contact; в футере главной ссылка «Контакты (страница)»
+- sitemap.ts: 2 URL — «/» (weekly, 1.0) и «/contact/» (monthly, 0.8); без якорей/utm/http/www
+- SEO.md: канонические URL, готовый конфиг nginx 301 (www→canonical, http→https, /index.html→/), чеклисты Яндекс.Вебмастер + GSC, список «что НЕЛЬЗЯ»
+- verify-static.mjs: 25 → 32 проверок (canonical/JSON-LD/каналы /contact/, отсутствие FAQPage на /contact/, ссылка из футера, sitemap 2 URL чистых)
+- Сборка: lint 0 errors (2 старых warning в verify-static.mjs); bun run build OK; out и static-build → 32 PASS / 0 FAIL; static-build пересобран (rm -rf + cp + .nojekyll)
+- agent-browser QA (localhost:8789): /contact/ desktop 1440 + mobile 375 — рендер полный, консоль чистая; футер sticky: footerBottom==vh, gap 0; переходы: футер-ссылка → /contact/, brand-линк → главная, CTA → /#contact — все работают
+- 3 коммита (69ee87c fix(seo), d1ca713 feat(contact), d7781f1 build) запушены в chore/archive-ui-blocks; комментарий в PR #25: https://github.com/zhdanovm142-create/snaryaga-site/pull/25#issuecomment-5832099794
+
+Stage Summary:
+- Sitemap актуален: 2 канонических URL; сниппет-разметка усилена (email/contactPoint/алиасы); /contact/ — второй вход для роботов
+- ДЕЙСТВИЯ ВЛАДЕЛЬЦА: 1) настроить 301 на nginx (SEO.md §3 — www сейчас 200!), 2) после деплоя — sitemap + переобход в Вебмастере/GSC, 3) токен отозвать
+- Риски: пока PR #25 не смержен, /contact/ на LIVE нет (404 в sitemap не попадает — безопасно)

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono, Oswald } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
-import StructuredData from "@/components/site/StructuredData";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -113,7 +112,10 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} ${oswald.variable} antialiased bg-bg text-text`}
       >
-        <StructuredData />
+        {/* StructuredData (Organization/WebSite/Product/FAQPage) перенесён в
+            src/app/page.tsx: schema.org-типы должны описывать КОНТЕНТ
+            конкретной страницы (правило Google — FAQPage только там, где
+            видимые Q&A). У страницы /contact — своя разметка ContactPage. */}
         {children}
         <Toaster />
       </body>

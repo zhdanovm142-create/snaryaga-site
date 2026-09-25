@@ -284,16 +284,10 @@ function ProductDetailContent({
           {/* Size selector — только для размерных категорий (костюмы/комплекты) */}
           {sizable && (
             <div className="mb-6">
-              <div className="flex items-center justify-between mb-2">
+              <div className="mb-2">
                 <div className="font-mono-brand text-[0.65rem] text-[var(--olive)] tracking-[2px] uppercase">
                   Размер
                 </div>
-                <a
-                  href="#size-guide"
-                  className="text-[0.62rem] uppercase tracking-[1px] text-[var(--text3)] hover:text-[var(--olive-light)] transition-colors no-underline"
-                >
-                  Таблица размеров →
-                </a>
               </div>
               <div
                 className="flex flex-wrap gap-2"

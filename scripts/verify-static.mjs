@@ -58,6 +58,29 @@ check("A17 yandex verify-файл", existsSync(join(ROOT, "yandex_40b673b993338f
 check("A18 favicon.ico в корне", existsSync(join(ROOT, "favicon.ico")));
 check("A19 favicon.svg в корне", existsSync(join(ROOT, "favicon.svg")));
 
+/* A20–A24: отдельная страница контактов /contact/ */
+const contactPath = join(ROOT, "contact", "index.html");
+if (existsSync(contactPath)) {
+  const contact = readFileSync(contactPath, "utf8");
+  check("A20 contact: canonical /contact/", contact.includes('<link rel="canonical" href="https://xn--36-6kcao2dwaf3k.xn--p1ai/contact/"'));
+  check("A21 contact: title/description с брендом", /Контакты СНАРЯГА36 \(Снаряга 36\)/.test(contact) && /Снаряга 36/.test(contact));
+  check("A22 contact: JSON-LD ContactPage", contact.includes('"@type":"ContactPage"') && contact.includes('"@type":"BreadcrumbList"'));
+  check("A23 contact: каналы (tel/tg/vk/wa/mail)", ["tel:+79515596622", "https://t.me/snaryaga36", "https://vk.ru/club240233552", "https://wa.me/79515596622", "mailto:info@снаряга36.рф"].every((u) => contact.includes(u)));
+  check("A24 contact: FAQPage schema НЕ утекла на /contact/", !contact.includes('"@type":"FAQPage"'));
+  check("A25 главная: ссылка на /contact/ в футере", html.includes('href="/contact/"'));
+} else {
+  check("A20 contact/index.html существует", false);
+}
+
+/* A26: sitemap содержит оба URL, без якорей/дублей */
+if (existsSync(sitemapPath)) {
+  const sm = readFileSync(sitemapPath, "utf8");
+  const locs = [...sm.matchAll(/<loc>([^<]+)<\/loc>/g)].map((x) => x[1]);
+  const need = [`https://xn--36-6kcao2dwaf3k.xn--p1ai/`, `https://xn--36-6kcao2dwaf3k.xn--p1ai/contact/`];
+  const locsClean = locs.every((u) => u.startsWith("https://xn--36-6kcao2dwaf3k.xn--p1ai") && !u.includes("#") && !u.includes("www") && !u.includes("utm"));
+  check("A26 sitemap: / и /contact/, 2 URL, без мусора", locs.length === 2 && need.every((u) => locs.includes(u)) && locsClean, `${locs.length} URL`);
+} else check("A26 sitemap.xml существует", false);
+
 /* ---------- B. Целостность ассетов ---------- */
 const urls = new Set();
 const re = /(?:src|href|poster|content)="(\/[^"#?]+)(?:[?#][^"]*)?"/g;
