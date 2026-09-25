@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import SiteChrome from "@/components/site/SiteChrome";
+import StructuredData from "@/components/site/StructuredData";
 import Hero from "@/components/site/Hero";
 import Marquee from "@/components/site/Marquee";
 import Categories from "@/components/site/Categories";
@@ -79,7 +80,12 @@ const Contact = dynamic(() => import("@/components/site/Contact"), {
  */
 export default function Home() {
   return (
-    <SiteChrome>
+    <>
+      {/* JSON-LD главной страницы: Organization + WebSite + Product[] + FAQPage.
+          Рендерится именно здесь (а не в layout): FAQPage/Product описывают
+          контент ЭТОЙ страницы. У /contact — своя ContactPage-разметка. */}
+      <StructuredData />
+      <SiteChrome>
       <main className="flex-1">
         <Hero />
         <Marquee />
@@ -107,6 +113,7 @@ export default function Home() {
         <Contact />
       </main>
       <Footer />
-    </SiteChrome>
+      </SiteChrome>
+    </>
   );
 }

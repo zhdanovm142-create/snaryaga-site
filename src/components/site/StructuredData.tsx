@@ -14,14 +14,20 @@ import { PRODUCTS } from "@/data/products";
 // Дублируем константу (не импортируем из layout.tsx — там цикл: layout импортирует StructuredData).
 const SITE_URL = "https://xn--36-6kcao2dwaf3k.xn--p1ai";
 
-// Варианты написания бренда — слитно и раздельно: по запросу «снаряга 36»
-// раздельно сайт не находился. alternateName принимает массив (schema.org).
+// Варианты написания бренда — слитно, раздельно и через дефис: по запросам
+// «снаряга 36» и «снаряга-36» сайт не находился, если написание отсутствовало
+// в разметке. alternateName принимает массив (schema.org) — это легитимное
+// (white-hat) место для всех вариантов, страницы под них НЕ создаются.
 const BRAND_ALIASES = [
   "СНАРЯГА 36",
   "Снаряга 36",
   "снаряга 36",
+  "СНАРЯГА-36",
+  "Снаряга-36",
+  "снаряга-36",
   "Snaryaga36",
   "Snaryaga 36",
+  "Snaryaga-36",
 ];
 
 const ORG = {
@@ -30,11 +36,18 @@ const ORG = {
   name: "Снаряга36",
   alternateName: BRAND_ALIASES,
   url: SITE_URL,
-  logo: { "@type": "ImageObject", url: `${SITE_URL}/logo.svg` },
+  logo: {
+    "@type": "ImageObject",
+    url: `${SITE_URL}/logo.svg`,
+    width: 512,
+    height: 512,
+  },
   description:
     "Разработка и производство экипировки из экранирующих тканей для снижения заметности в инфракрасном диапазоне.",
   telephone: "+7-951-559-66-22",
-  email: undefined,
+  // Email совпадает с видимым в футере (mailto:info@снаряга36.рф) —
+  // расхождений между разметкой и контентом быть не должно.
+  email: "info@снаряга36.рф",
   address: {
     "@type": "PostalAddress",
     addressLocality: "Воронеж",
@@ -42,7 +55,19 @@ const ORG = {
     addressCountry: "RU",
     streetAddress: "Купянский переулок, д. 11",
   },
-  sameAs: ["https://vk.ru/club240233552"],
+  // contactPoint — источник для сниппетов «связаться» в Яндекс/Google.
+  contactPoint: [
+    {
+      "@type": "ContactPoint",
+      contactType: "sales",
+      telephone: "+7-951-559-66-22",
+      email: "info@снаряга36.рф",
+      availableLanguage: ["ru", "en"],
+      areaServed: "RU",
+    },
+  ],
+  // Профили компании во внешних сервисах (только реальные страницы).
+  sameAs: ["https://vk.ru/club240233552", "https://t.me/snaryaga36"],
 };
 
 const WEBSITE = {
