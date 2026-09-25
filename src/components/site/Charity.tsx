@@ -91,26 +91,37 @@ export default function Charity() {
           </div>
 
           <div className="reveal grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {CHARITY_FEATS.map((f, i) => (
-              <div
-                key={f.title}
-                className={`group border border-[var(--border-brand)] bg-[var(--bg3)] p-6 transition-all duration-300 hover:border-[var(--olive-dark)] hover:-translate-y-1 ${
-                  // Последняя карточка («Сообщество») занимает всю ширину ряда —
-                  // место удалённой карточки «Прозрачность».
-                  i === CHARITY_FEATS.length - 1 ? "sm:col-span-2" : ""
-                }`}
-              >
-                <div className="w-12 h-12 flex items-center justify-center bg-[rgba(92,107,60,0.1)] border border-[var(--olive-dark)] text-2xl mb-3 transition-all duration-300 group-hover:bg-[var(--olive)] group-hover:border-[var(--olive)]">
-                  {f.icon}
+            {CHARITY_FEATS.map((f, i) => {
+              // Последняя карточка («Сообщество») занимает всю ширину ряда —
+              // место удалённой карточки «Прозрачность». Чтобы широкая карточка
+              // не выглядела пусто, на sm+ переводим её в горизонтальную
+              // раскладку: иконка слева, текст справа.
+              const isWide = i === CHARITY_FEATS.length - 1;
+              return (
+                <div
+                  key={f.title}
+                  className={`group border border-[var(--border-brand)] bg-[var(--bg3)] p-6 transition-all duration-300 hover:border-[var(--olive-dark)] hover:-translate-y-1 ${
+                    isWide ? "sm:col-span-2 sm:flex sm:items-center sm:gap-5" : ""
+                  }`}
+                >
+                  <div
+                    className={`w-12 h-12 shrink-0 flex items-center justify-center bg-[rgba(92,107,60,0.1)] border border-[var(--olive-dark)] text-2xl mb-3 transition-all duration-300 group-hover:bg-[var(--olive)] group-hover:border-[var(--olive)] ${
+                      isWide ? "sm:mb-0" : ""
+                    }`}
+                  >
+                    {f.icon}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-display text-[1.05rem] font-bold uppercase mb-1.5">
+                      {f.title}
+                    </div>
+                    <div className="text-[0.82rem] text-[var(--text2)] leading-[1.6]">
+                      {f.desc}
+                    </div>
+                  </div>
                 </div>
-                <div className="font-display text-[1.05rem] font-bold uppercase mb-1.5">
-                  {f.title}
-                </div>
-                <div className="text-[0.82rem] text-[var(--text2)] leading-[1.6]">
-                  {f.desc}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
