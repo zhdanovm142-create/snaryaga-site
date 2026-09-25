@@ -13,6 +13,10 @@ import { useEffect } from "react";
  *    всей страницы и при быстрой прокрутке).
  * 3. Fallback: через 1.2с после загрузки все ещё скрытые элементы принудительно
  *    раскрываются (защита от случаев, когда observer не сработал).
+ * 4. MutationObserver: динамически добавленные `.reveal` (фильтр каталога,
+ *    «Недавно просмотренные», табы, дровер) подхватываются автоматически —
+ *    иначе они остаются с opacity:0 навсегда (баг «карточки не возвращаются
+ *    после сброса фильтра категорий»).
  */
 export function useScrollReveal() {
   useEffect(() => {
@@ -23,11 +27,22 @@ export function useScrollReveal() {
       el.classList.add("is-visible");
     };
 
-    // 1. Сразу раскрываем то, что уже в зоне видимости или чуть ниже.
-    const vh = window.innerHeight;
-    reveals.forEach((el) => {
+    /** В зоне видимости (с запасом 1.2 экрана вниз)? */
+    const inRevealZone = (el: HTMLElement): boolean => {
       const rect = el.getBoundingClientRect();
-      if (rect.top < vh * 1.2) reveal(el);
+      return rect.top < window.innerHeight * 1.2;
+    };
+
+    /** Раскрыть сразу, если элемент во вьюпорте; иначе вернуть true, если нужен observer. */
+    const revealOrObserve = (el: HTMLElement, observer: IntersectionObserver): void => {
+      if (el.classList.contains("is-visible")) return;
+      if (inRevealZone(el)) reveal(el);
+      else observer.observe(el);
+    };
+
+    // 1. Сразу раскрываем то, что уже в зоне видимости или чуть ниже.
+    reveals.forEach((el) => {
+      if (inRevealZone(el)) reveal(el);
     });
 
     // 2. IntersectionObserver для оставшихся.
@@ -59,8 +74,32 @@ export function useScrollReveal() {
       });
     }, 1200);
 
+    // 4. Динамически добавленные `.reveal` — подхватываем на лету.
+    //    Без этого карточки, перемонтированные при переключении категорий
+    //    каталога, остаются невидимыми (opacity:0) до конца сессии.
+    let mutationObserver: MutationObserver | null = null;
+    if ("MutationObserver" in window) {
+      mutationObserver = new MutationObserver((mutations) => {
+        for (const m of mutations) {
+          m.addedNodes.forEach((node) => {
+            if (!(node instanceof HTMLElement)) return;
+            const targets: HTMLElement[] = [];
+            if (node.classList.contains("reveal")) targets.push(node);
+            targets.push(
+              ...Array.from(node.querySelectorAll<HTMLElement>(".reveal"))
+            );
+            for (const el of targets) {
+              revealOrObserve(el, observer);
+            }
+          });
+        }
+      });
+      mutationObserver.observe(document.body, { childList: true, subtree: true });
+    }
+
     return () => {
       observer.disconnect();
+      mutationObserver?.disconnect();
       clearTimeout(fallback);
     };
   }, []);

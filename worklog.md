@@ -458,3 +458,24 @@ Stage Summary:
 - Sitemap актуален: 2 канонических URL; сниппет-разметка усилена (email/contactPoint/алиасы); /contact/ — второй вход для роботов
 - ДЕЙСТВИЯ ВЛАДЕЛЬЦА: 1) настроить 301 на nginx (SEO.md §3 — www сейчас 200!), 2) после деплоя — sitemap + переобход в Вебмастере/GSC, 3) токен отозвать
 - Риски: пока PR #25 не смержен, /contact/ на LIVE нет (404 в sitemap не попадает — безопасно)
+
+---
+Task ID: BUG-1 (webDevReview раунд 5)
+Agent: main (Super Z sandbox)
+Task: Фикс бага каталога «карточки пропадают при выборе категорий и не возвращаются назад» (сообщение владельца + файл с описанием; файл не дошёл, симптом воспроизведён по описанию).
+
+Work Log:
+- Воспроизведение (agent-browser, static-build :8789, до фикса): Аксессуары → Все → «Найдено: 14», cards=14, visible=4; далее Бугор → Штурмовые → Все: cards=14, visible=0. Скрин download/qa/bug-before-filter.png
+- Причина: карточки каталога с классом .reveal (opacity:0 до .is-visible), useScrollReveal сканирует DOM один раз при загрузке (deps []) — перемонтированные при смене фильтра узлы никто не наблюдает → opacity:0 навсегда. Тот же латентный баг у «Вы недавно смотрели» (монтируется после гидратации)
+- Фикс 1: CatalogToolbar.tsx — карточки (grid+list) переведены с .reveal на CSS-анимацию .sn-card-in + каскад animationDelay index*45мс (cap 11); комментарий-предупреждение в коде
+- Фикс 2: use-scroll.ts — MutationObserver (body, subtree) подхватывает динамически добавленные .reveal: во вьюпорте — сразу is-visible, ниже — в IntersectionObserver
+- Фикс 3: globals.css — @keyframes sn-card-in (fill-mode both); reduced-motion покрыт существующим media-query
+- QA после фикса (новая сборка, чистый профиль браузера): 9 шагов категорий туда-обратно — cards=found=visible на каждом (14/14 после каждого «Все»); поиск+категория+сброс → 14/14; grid↔list → 14/14; «Вы недавно смотрели» 2/2 reveal раскрыты после скролла; модалка товара (кнопка «Детали»!) открывается/закрывается, localStorage sn36-recently-viewed пишется; /contact/ без регрессий (canonical punycode, 0 reveal, 0 ошибок)
+- Консоль 0 ошибок; скрины: bug-after-catalog/cards-grid/filter-bugor/mobile375 (desktop 1280 + mobile 375)
+- lint 0 errors; build OK; verify-static out и static-build 32 PASS / 0 FAIL; static-build пересобран
+- Коммит bcc196d запушен; отчёт в PR #25: https://github.com/zhdanovm142-create/snaryaga-site/pull/25#issuecomment-5832825719
+
+Stage Summary:
+- Баг каталога закрыт на двух уровнях (CSS-анимация карточек — по построению; MutationObserver — страх-net для всех динамических .reveal); попутно исправлен вечный «прыжок» невидимости «Вы недавно смотрели»
+- Примечание: токен в remote — формат x-access-token:<TOKEN> (API принимает часть после двоеточия); напоминание владельцу отозвать токен
+- Далее: мерж PR #25 владельцем → деплой static-build → nginx 301 (SEO.md §3) → Вебмастер/GSC

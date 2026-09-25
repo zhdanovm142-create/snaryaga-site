@@ -315,10 +315,11 @@ export default function CatalogToolbar() {
             ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-[var(--border-brand)] border border-[var(--border-brand)]"
             : "flex flex-col gap-px bg-[var(--border-brand)] border border-[var(--border-brand)]"
           }>
-            {filtered.map((p) => (
+            {filtered.map((p, i) => (
               <ProductCard
                 key={p.id}
                 p={p}
+                index={i}
                 view={view}
                 onOrder={onOrder}
                 onQuickView={onQuickView}
@@ -351,17 +352,30 @@ function isLocalImage(src: string): boolean {
 
 function ProductCard({
   p,
+  index,
   view,
   onOrder,
   onQuickView,
   onAddToCartToast,
 }: {
   p: Product;
+  /** Позиция в отфильтрованном списке — для каскадной анимации появления. */
+  index: number;
   view: ViewMode;
   onOrder: (n: string) => void;
   onQuickView: (p: Product) => void;
   onAddToCartToast: (name: string) => void;
 }) {
+  /*
+   * ВАЖНО: карточки НЕ используют класс `.reveal`. Reveal работает через
+   * IntersectionObserver, собранный один раз при загрузке страницы, и
+   * карточки, перемонтированные при переключении категорий фильтра, остаются
+   * с opacity:0 навсегда (баг «карточки не возвращаются после сброса фильтра»).
+   * Вместо этого — чистая CSS-анимация `.sn-card-in`: проигрывается при каждой
+   * вставке в DOM и всегда заканчивается видимым состоянием (fill-mode: both),
+   * без какой-либо зависимости от JS.
+   */
+  const cardAnimStyle = { animationDelay: `${Math.min(index, 11) * 45}ms` };
   const { isFavorite, toggleFavorite, hydrated } = useFavorites();
   const { add } = useCart();
   const fav = hydrated && isFavorite(p.id);
@@ -406,7 +420,10 @@ function ProductCard({
   // List view: горизонтальная карточка — фото слева (фикс. ширина), контент справа.
   if (isList) {
     return (
-      <article className="reveal group sn-scope-card bg-[var(--bg2)] p-4 sm:p-6 transition-all duration-400 cursor-pointer relative hover:bg-[var(--bg3)] flex flex-col sm:flex-row gap-5 sm:gap-8">
+      <article
+        className="sn-card-in group sn-scope-card bg-[var(--bg2)] p-4 sm:p-6 transition-all duration-400 cursor-pointer relative hover:bg-[var(--bg3)] flex flex-col sm:flex-row gap-5 sm:gap-8"
+        style={cardAnimStyle}
+      >
         <button
           type="button"
           onClick={(e) => {
@@ -513,7 +530,10 @@ function ProductCard({
   }
 
   return (
-    <article className="reveal group sn-scope-card bg-[var(--bg2)] p-6 sm:p-8 transition-all duration-400 cursor-pointer relative hover:bg-[var(--bg3)] flex flex-col">
+    <article
+      className="sn-card-in group sn-scope-card bg-[var(--bg2)] p-6 sm:p-8 transition-all duration-400 cursor-pointer relative hover:bg-[var(--bg3)] flex flex-col"
+      style={cardAnimStyle}
+    >
       <button
         type="button"
         onClick={(e) => {
