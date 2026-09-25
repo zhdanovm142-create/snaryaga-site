@@ -288,12 +288,6 @@ function ProductDetailContent({
                 <div className="font-mono-brand text-[0.65rem] text-[var(--olive)] tracking-[2px] uppercase">
                   Размер
                 </div>
-                <a
-                  href="#size-guide"
-                  className="text-[0.62rem] uppercase tracking-[1px] text-[var(--text3)] hover:text-[var(--olive-light)] transition-colors no-underline"
-                >
-                  Таблица размеров →
-                </a>
               </div>
               <div
                 className="flex flex-wrap gap-2"

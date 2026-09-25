@@ -8,7 +8,6 @@ import Tech from "@/components/site/Tech";
 import Compare from "@/components/site/Compare";
 import CompareTable from "@/components/site/CompareTable";
 import Guarantees from "@/components/site/Guarantees";
-import SizeGuide from "@/components/site/SizeGuide";
 import About from "@/components/site/About";
 import Charity from "@/components/site/Charity";
 import Footer from "@/components/site/Footer";
@@ -99,7 +98,6 @@ export default function Home() {
         <SectionDivider variant="diamond" />
         <Guarantees />
         <SectionDivider variant="tag" label="Вопросы" color="olive" />
-        <SizeGuide />
         <Faq />
         <About />
         <Charity />
